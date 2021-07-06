@@ -2,8 +2,12 @@ import g from '../canvasapp.js';
 
 g.set_design_size(668, 1080);
 
-const circle11       = g.loop(g.frames(i_circle), 10,   0, 0);
-const square12       = g.loop(g.frames(i_square), 10, 337, 8);
+const circle11        = g.loop(g.frames(i_circle  ), 10,   0,   0);
+const square12        = g.loop(g.frames(i_square  ), 10, 337,   8);
+const square21        = g.loop(g.frames(i_square  ), 10,  36, 349);
+const triangle22      = g.loop(g.frames(i_triangle), 10, 339, 357);
+const triangle31      = g.loop(g.frames(i_triangle), 10,  53, 698);
+const circle32        = g.loop(g.frames(i_circle  ), 10, 347, 696);
 
 const door11_closed  = g.loop(g.frames(i_door11_0));
 const door12_closed  = g.loop(g.frames(i_door12_0));
@@ -47,6 +51,10 @@ const door22_close   = g.touch(g.rect( 340, 434, 440, 700));
 const door31_close   = g.touch(g.rect( 0, 803, 122, 964));
 const door32_close   = g.touch(g.rect( 344, 793, 440, 1030));
 
+// const win = () => {
+// 	if 
+// };
+
 const touches = () => {
 	if (door11_closed.started()) {
 		door11_open.start();
@@ -87,19 +95,19 @@ door22_opening.starts(door22_opened, touches);
 door31_opening.starts(door31_opened, touches);
 door32_opening.starts(door32_opened, touches);
 
-door11_closing.stops(circle11).starts(door11_closed, touches);
-door12_closing.stops(square12).starts(door12_closed, touches);
-door21_closing.starts(door21_closed, touches);
-door22_closing.starts(door22_closed, touches);
-door31_closing.starts(door31_closed, touches);
-door32_closing.starts(door32_closed, touches);
+door11_closing.stops(circle11  ).starts(door11_closed, touches);
+door12_closing.stops(square12  ).starts(door12_closed, touches);
+door21_closing.stops(square21  ).starts(door21_closed, touches);
+door22_closing.stops(triangle22).starts(door22_closed, touches);
+door31_closing.stops(triangle31).starts(door31_closed, touches);
+door32_closing.stops(circle32  ).starts(door32_closed, touches);
 
-door11_open.stops(door11_closed).starts(door11_opening, circle11);
-door12_open.stops(door12_closed).starts(door12_opening, square12);
-door21_open.stops(door21_closed).starts(door21_opening);
-door22_open.stops(door22_closed).starts(door22_opening);
-door31_open.stops(door31_closed).starts(door31_opening);
-door32_open.stops(door32_closed).starts(door32_opening);
+door11_open.stops(door11_closed).starts(door11_opening, circle11  );
+door12_open.stops(door12_closed).starts(door12_opening, square12  );
+door21_open.stops(door21_closed).starts(door21_opening, square21  );
+door22_open.stops(door22_closed).starts(door22_opening, triangle22);
+door31_open.stops(door31_closed).starts(door31_opening, triangle31);
+door32_open.stops(door32_closed).starts(door32_opening, circle32  );
 
 door11_close.stops(door11_opened).starts(door11_closing);
 door12_close.stops(door12_opened).starts(door12_closing);
