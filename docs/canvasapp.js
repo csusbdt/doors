@@ -197,9 +197,10 @@ const frame = function(image, duration = 1/8, x = 0, y = 0) {
 
 const frames = function(images, duration = 1/8, x = 0, y = 0) {
 	if (!Array.isArray(images)) {
-		throw new Error("images not an array");
+		return [new c_frame(images, duration, x, y)];
+	} else {
+		return images.map(image => new c_frame(image, duration, x, y));
 	}
-	return images.map(image => new c_frame(image, duration, x, y));
 };
 
 //#endregion
@@ -434,15 +435,9 @@ let dirty = true;  // to redraw canvas
 let g_w     = 1280;  // design width
 let g_h     = 720;   // design height
 
-function set_design_width(w) {
+function set_design_size(w, h) {
 	g_w = w;
-	dirty = true;
-	adjust_canvas();
-}
-
-function set_design_height(h) {
 	g_h = h;
-	dirty = true;
 	adjust_canvas();
 }
 
@@ -669,18 +664,11 @@ requestAnimationFrame(animation_loop);
 //#region exports
 
 export default {
-	version: '2021-07-06',
 	log: log,
-	set_design_width: set_design_width,
-	set_design_height: set_design_height,
-	// set_splash_image: set_splash_image,
-	// set_fullscreen_image: set_fullscreen_image,
-	// set_splash_shapes: set_splash_shapes,
-	// set_fullscreen_shapes: set_fullscreen_shapes,
+	set_design_size: set_design_size,
 	start: start,
 	circle: circle,
 	rect: rect,
-//	sound: sound,
 	frame: frame,
 	frames: frames,
 	delay: delay,
