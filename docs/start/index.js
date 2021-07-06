@@ -51,10 +51,6 @@ const door22_close   = g.touch(g.rect( 340, 434, 440, 700));
 const door31_close   = g.touch(g.rect( 0, 803, 122, 964));
 const door32_close   = g.touch(g.rect( 344, 793, 440, 1030));
 
-// const win = () => {
-// 	if 
-// };
-
 const touches = () => {
 	if (door11_closed.started()) {
 		door11_open.start();
@@ -88,19 +84,92 @@ const touches = () => {
 	}
 };
 
-door11_opening.starts(door11_opened, touches);
-door12_opening.starts(door12_opened, touches);
-door21_opening.starts(door21_opened, touches);
-door22_opening.starts(door22_opened, touches);
-door31_opening.starts(door31_opened, touches);
-door32_opening.starts(door32_opened, touches);
+const win = () => {
+	location.href = 'https://github.com/csusbdt/doors/blob/main/README.md';
+};
 
-door11_closing.stops(circle11  ).starts(door11_closed, touches);
-door12_closing.stops(square12  ).starts(door12_closed, touches);
-door21_closing.stops(square21  ).starts(door21_closed, touches);
-door22_closing.stops(triangle22).starts(door22_closed, touches);
-door31_closing.stops(triangle31).starts(door31_closed, touches);
-door32_closing.stops(circle32  ).starts(door32_closed, touches);
+let circles   = 0;
+let squares   = 0;
+let triangles = 0;
+
+
+const reset = () => {
+	if (door11_opened.started()) {
+		door11_opened.stop();
+		door11_closing.start();
+	}
+	if (door12_opened.started()) {
+		door12_opened.stop();
+		door12_closing.start();
+	}
+	if (door21_opened.started()) {
+		door21_opened.stop();
+		door21_closing.start();
+	}
+	if (door22_opened.started()) {
+		door22_opened.stop();
+		door22_closing.start();
+	}
+	if (door31_opened.started()) {
+		door31_opened.stop();
+		door31_closing.start();
+	}
+	if (door32_opened.started()) {
+		door32_opened.stop();
+		door32_closing.start();
+	}
+};
+
+const show_circle = () => {
+	++circles;
+	if (triangles === 1 || squares === 1) {
+		reset();
+	} else if (circles === 2 && triangles === 2 && squares === 2) {
+		win();
+	} else {
+		touches();
+	}
+};
+
+const show_square = () => {
+	++squares;
+	if (circles === 1 || triangles === 1) {
+		reset();
+	} else if (circles === 2 && triangles === 2 && squares === 2) {
+		win();
+	} else {
+		touches();
+	}
+};
+
+const show_triangle = () => {
+	++triangles;
+	if (circles === 1 || squares === 1) {
+		reset();
+	} else if (circles === 2 && triangles === 2 && squares === 2) {
+		win();
+	} else {
+		touches();
+	}
+};
+
+const hide_circle   = () => { --circles  ; touches(); }
+const hide_square   = () => { --squares  ; touches(); }
+const hide_triangle = () => { --triangles; touches(); }
+
+door11_opening.starts(door11_opened, show_circle  );
+door12_opening.starts(door12_opened, show_square  );
+door21_opening.starts(door21_opened, show_square  );
+door22_opening.starts(door22_opened, show_triangle);
+door31_opening.starts(door31_opened, show_triangle);
+door32_opening.starts(door32_opened, show_circle  );
+
+door11_closing.stops(circle11  ).starts(door11_closed, hide_circle  );
+door12_closing.stops(square12  ).starts(door12_closed, hide_square  );
+door21_closing.stops(square21  ).starts(door21_closed, hide_square  );
+door22_closing.stops(triangle22).starts(door22_closed, hide_triangle);
+door31_closing.stops(triangle31).starts(door31_closed, hide_triangle);
+door32_closing.stops(circle32  ).starts(door32_closed, hide_circle  );
 
 door11_open.stops(door11_closed).starts(door11_opening, circle11  );
 door12_open.stops(door12_closed).starts(door12_opening, square12  );
