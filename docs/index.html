@@ -9,12 +9,13 @@
 </head>
 <body>
 	<script>
-//		const current_level = localStorage.getItem('doors.current_level');
-//		if (current_level === null) {
+		const current_page = localStorage.getItem('doors.current_page');
+		if (current_page === null) {
+			localStorage.setItem('doors.current_page', 'start');
 			location.replace('./start/');
-//		} else {
-//			location.replace('./' + current_level + '/');
-//		}
+		} else {
+			location.replace('./' + current_page + '/');
+		}
 	</script>
 </body>
 </html>

@@ -64,6 +64,15 @@
 	<img id="i_door32_1"   src="images/door32_1.png" />
 	<img id="i_door32_2"   src="images/door32_2.png" />
 	<img id="i_door32_3"   src="images/door32_3.png" />
+
+	<script type="module">
+		const current_page = localStorage.getItem('doors.current_page');
+		if (current_page === null) {
+			location.replace('../');
+		} else {
+			localStorage.setItem('doors.current_page', 'start');
+		}
+	</script>
 	
 	<script type="module" src="index.js"></script>
 </body>

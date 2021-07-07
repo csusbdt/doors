@@ -85,7 +85,8 @@ const touches = () => {
 };
 
 const win = () => {
-	location.href = 'https://github.com/csusbdt/doors/blob/main/README.md';
+	localStorage.setItem('doors.current_page', 'triangle');
+	location.href = '../';
 };
 
 let circles   = 0;
