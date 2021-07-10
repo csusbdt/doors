@@ -404,9 +404,7 @@ c_touch.prototype.stop = function() {
 c_touch.prototype.touch = function(x, y) {
 	for (let i = 0; i < this.shapes.length; ++i) {
 		if (this.shapes[i].inside(x - this.dx, y - this.dy)) {
-			if (this.independent) {
-				remove_touchable(this);
-			} else {
+			if (!this.independent) {
 				touchables = touchables.filter(o => o.independent);
 			}
 			stop(this.stop_set);
@@ -479,67 +477,14 @@ const canvas_coords = e => {
 	};
 };
 
-// let splash_image = null;
-// let fullscreen_image = null;
-// let splash_shapes = null;
-// let fullscreen_shapes = null;
-
-// function set_splash_image(image) {
-// 	splash_image = image;
-// }
-
-// function set_fullscreen_image(image) {
-// 	fullscreen_image = image;
-// }
-
-// function set_splash_shapes(shapes) {
-// 	splash_shapes = shapes;
-// }
-
-// function set_fullscreen_shapes(shapes) {
-// 	fullscreen_shapes = shapes;
-// }
-
-const drawables      = [];
-const updatables     = [];
-let touchables       = [];
-
-//let audio_context = null;
+const drawables  = [];
+const updatables = [];
+let touchables   = [];
 
 const on_touch = p => {
-	// if (audio_context === null) {
-	// 	audio_context = new (window.AudioContext || window.webkitAudioContext)();
-	// 	dirty = true;
-	// 	if (fullscreen_enabled()) {
-	// 		if (splash_shapes === null) {
-	// 			request_fullscreen();
-	// 		} else {
-	// 			for (let i = 0; i < splash_shapes.length; ++i) {
-	// 				if (splash_shapes[i].inside(p.x, p.y)) {
-	// 					request_fullscreen();
-	// 					break;
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// } else {
-		// // I'm not sure the following is needed but I think phones might 
-		// // suspend audio contexts to reduce battery drain.
-		// if (audio_context.state === 'suspended') {
-		// 	audio_context.resume();
-		// }
-		// if (fullscreen_enabled() && !fullscreen_active()) {
-		// 	for (let i = 0; i < fullscreen_shapes.length; ++i) {
-		// 		if (fullscreen_shapes[i].inside(p.x, p.y)) {
-		// 			request_fullscreen();
-		// 			return;
-		// 		}
-		// 	}
-		// }
-		for (let i = 0; i < touchables.length; ++i) {
-			if (touchables[i].touch(p.x, p.y)) break;
-		}	
-	//}
+	for (let i = 0; i < touchables.length; ++i) {
+		if (touchables[i].touch(p.x, p.y)) break;
+	}	
 };
 
 const mousemove = e => {
@@ -600,6 +545,15 @@ const add_updatable = function(o) {
 const clear_touchables = function() {
 	touchables.length = 0;
 };
+
+// const clear_drawables = function() {
+// 	drawables.length = 0;
+// 	dirty = true;
+// };
+
+// const clear_updatables = function() {
+// 	updatables.length = 0;
+// };
 
 const remove_touchable = function(o) {
 	const i = touchables.indexOf(o);
@@ -666,6 +620,8 @@ requestAnimationFrame(animation_loop);
 export default {
 	log: log,
 	set_design_size: set_design_size,
+//	clear_drawables: clear_drawables,
+//	clear_updatables: clear_updatables,
 	start: start,
 	circle: circle,
 	rect: rect,
