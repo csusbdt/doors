@@ -22,13 +22,15 @@ const b = [
 	g.loop(g.frames(i_b6))
 ];
 
-const r4_blinking = g.once(g.frames(i_r4, i_blank, i_r4, i_blank, i_r4, i_blank));
-const r5_blinking = g.once(g.frames(i_r5, i_blank, i_r5, i_blank, i_r5, i_blank));
-const r6_blinking = g.once(g.frames(i_r6, i_blank, i_r6, i_blank, i_r6, i_blank));
+const r4_blinking = g.once(g.frames(i_blank, i_r4, i_blank, i_r4, i_blank, i_r4, i_blank));
+const r5_blinking = g.once(g.frames(i_blank, i_r5, i_blank, i_r5, i_blank, i_r5, i_blank));
+const r6_blinking = g.once(g.frames(i_blank, i_r6, i_blank, i_r6, i_blank, i_r6, i_blank));
 
-const b0_blinking = g.once(g.frames(i_b0, i_blank, i_b0, i_blank, i_b0, i_blank));
-const b1_blinking = g.once(g.frames(i_b1, i_blank, i_b1, i_blank, i_b1, i_blank));
-const b2_blinking = g.once(g.frames(i_b2, i_blank, i_b2, i_blank, i_b2, i_blank));
+const b0_blinking = g.once(g.frames(i_blank, i_b0, i_blank, i_b0, i_blank, i_b0, i_blank));
+const b1_blinking = g.once(g.frames(i_blank, i_b1, i_blank, i_b1, i_blank, i_b1, i_blank));
+const b2_blinking = g.once(g.frames(i_blank, i_b2, i_blank, i_b2, i_blank, i_b2, i_blank));
+
+const red_blinking = g.delay(1/8).stops(r[4], r[5], r[6]).starts(r4_blinking, r5_blinking, r6_blinking);
 
 r6_blinking.starts(() => {
 	localStorage.setItem('doors.current_page', 'red');
@@ -98,9 +100,7 @@ t[3].starts(() => {
 	if (s[4] === 1 && s[5] === 1 && s[6] === 1) {
 		t.forEach(o => o.stop());
 		u.stop();
-		r4_blinking.start();
-		r5_blinking.start();
-		r6_blinking.start();
+		red_blinking.start();
 	} else if (s[2] === 2 && s[1] === 2 && s[0] === 2) {
 		t.forEach(o => o.stop());
 		u.stop();
