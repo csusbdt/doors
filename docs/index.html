@@ -13,6 +13,7 @@
 		if (current_page === null) {
 			localStorage.setItem('doors.current_page', 'start');
 			location.replace('./start/');
+		} else if (current_page === 'home') {
 		} else {
 			location.replace('./' + current_page + '/');
 		}
