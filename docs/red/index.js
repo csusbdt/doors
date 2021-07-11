@@ -16,11 +16,6 @@ const smoke        = g.loop(g.frames([i_smoke_0, i_smoke_1, i_smoke_2], 1/5));
 const sun_opened   = g.loop(g.frames(i_sun_0));
 const sun_closing  = g.once(g.frames([i_sun_1, i_sun_2, i_sun_3, i_blank]));
 
-const go_home = () => {
-	localStorage.setItem('doors.current_page', 'home');
-	location.replace('../../');	
-};
-
 const door_open = g.touch(g.circle(473, 703, 60));
 const sun_close = g.touch(g.circle(156, 330, 60));
 
@@ -28,7 +23,7 @@ door_open.stops(door_closed).starts(man_start, door_opening);
 door_opening.starts(door_opened, g.delay(1).stops(smoke), g.delay(1.6).stops(man_start).starts(man_walking));
 man_walking.starts(man_end, g.delay(1.2).starts(head, sun_close));
 sun_close.stops(sun_opened).starts(sun_closing);
-sun_closing.starts(go_home);
+sun_closing.starts(g.goto('doors'));
 
 window.addEventListener('load', () => {
 	door_closed.start();
