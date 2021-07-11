@@ -84,11 +84,6 @@ const touches = () => {
 	}
 };
 
-const win = () => {
-	localStorage.setItem('doors.current_page', 'triangle');
-	location.href = '../';
-};
-
 let circles   = 0;
 let squares   = 0;
 let triangles = 0;
@@ -126,8 +121,8 @@ const show_circle = () => {
 	if (triangles === 1 || squares === 1) {
 		reset();
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
-		localStorage.setItem('doors.current_page', 'circle');
-		location.href = '../';
+		localStorage.setItem('doors.current_page', 'circles');
+		location.replace('../');
 	} else {
 		touches();
 	}
@@ -138,8 +133,8 @@ const show_square = () => {
 	if (circles === 1 || triangles === 1) {
 		reset();
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
-		localStorage.setItem('doors.current_page', 'square');
-		location.href = '../';
+		localStorage.setItem('doors.current_page', 'squares');
+		location.replace('../');
 	} else {
 		touches();
 	}
@@ -150,8 +145,8 @@ const show_triangle = () => {
 	if (circles === 1 || squares === 1) {
 		reset();
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
-		localStorage.setItem('doors.current_page', 'triangle');
-		location.href = '../';
+		localStorage.setItem('doors.current_page', 'triangles');
+		location.replace('../');
 	} else {
 		touches();
 	}

@@ -20,6 +20,13 @@ function start(start_set) {
 	});	
 }
 
+function goto(page) {
+	return () => {
+		localStorage.setItem('doors.current_page', page);
+		location.replace('../');
+	};
+}
+
 //#endregion
 
 //#region circle
@@ -64,109 +71,6 @@ const rect = function(left, top, right, bottom) {
 	return new c_rect(left, top, right, bottom);
 };
 
-//#endregion
-
-//#region sound
-/*
-
-function c_sound(audio_element) {
-	this.audio_element = audio_element;
-	this.playing = false;
-	this.broken = false;
-	this.start_set = [];
-	this.stop_set  = [];
-	audio_element.addEventListener('ended', () => {
-		this.playing = false;
-	});
-	audio_element.addEventListener('error', () => {
-		this.broken = true
-	});
-	audio_element.load();
-}
-
-c_sound.prototype.starts = function(...os) {
-	os.forEach(o => this.start_set.push(o));
-	return this;
-};
-
-c_sound.prototype.stops = function(...os) {
-	os.forEach(o => this.stop_set.push(o));
-	return this;
-};
-
-c_sound.prototype.start = function() {
-	if (this.broken || this.playing) {
-		stop(this.stop_set);
-		start(this.start_set);
-	} else {
-		this.playing = true;
-		this.audio_element.play();
-		setTimeout(() => {
-			stop(this.stop_set);
-			start(this.start_set);
-		}, this.audio_element.duration * 1000 + 120);
-	}
-};
-
-const sound = function(audio_element) {
-	return new c_sound(audio_element);
-};
-
-*/
-//#endregion
-
-//#region fullscreen
-
-/*
-const fullscreen_enabled = function() {
-	return (
-		'requestFullscreen'       in g_canvas ||
-		'webkitRequestFullscreen' in g_canvas ||
-		'mozRequestFullScreen'    in g_canvas ||
-		'msRequestFullscreen'     in g_canvas 
-	);
-};
-
-const fullscreen_active = function() {
-	if ('fullscreenElement' in document) {
-		return document.fullscreenElement === g_canvas;
-	} else if ('webkitFullscreenElement' in document) {
-		return document.webkitFullscreenElement === g_canvas;
-	} else if ('mozFullScreenElement' in document) {
-		return document.mozFullScreenElement === g_canvas;
-	} else if ('msFullscreenElement' in document) {
-		return document.msFullscreenElement === g_canvas;
-	} else {
-		return false;
-	}
-};
-
-// if ('onfullscreenchange' in document) {
-// 	document.onfullscreenchange = on_fullscreen_change;
-// } else if ('webkitfullscreenchange' in document) {
-// 	document.webkitfullscreenchange = on_fullscreen_change;
-// } else if ('mozfullscreenchange' in document) {
-// 	document.mozfullscreenchange = on_fullscreen_change;
-// } else if ('MSFullscreenChange' in document) {
-// 	document.MSFullscreenChange = on_fullscreen_change;
-// }
-
-// safari doesn't return a promise for requestFullscreen
-const request_fullscreen = function() {
-	if ('requestFullscreen' in g_canvas) {
-		return g_canvas.requestFullscreen();
-	} else if ('webkitRequestFullscreen' in g_canvas) {
-		return g_canvas.webkitRequestFullscreen();
-	} else if ('mozRequestFullScreen' in g_canvas) {
-		return g_canvas.mozRequestFullScreen();
-	} else if ('msRequestFullscreen' in g_canvas) {
-		return g_canvas.msRequestFullscreen();
-	} else {
-		throw new Error("request fullscreen not supported");
-	}
-};
-
-*/
 //#endregion
 
 //#region frame
@@ -620,6 +524,7 @@ requestAnimationFrame(animation_loop);
 export default {
 	log: log,
 	set_design_size: set_design_size,
+	goto: goto,
 //	clear_drawables: clear_drawables,
 //	clear_updatables: clear_updatables,
 	start: start,

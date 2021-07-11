@@ -1,22 +1,16 @@
 <html>
 <head>
-	<title>Canvas App</title>
-	<style>
-		body {
-			background-color: black;
-		}
-	</style>
+	<title>Doors</title>
 </head>
 <body>
-	<script>
-		const current_page = localStorage.getItem('doors.current_page');
-		if (current_page === null) {
-			localStorage.setItem('doors.current_page', 'start');
-			location.replace('./start/');
-		} else if (current_page === 'home') {
-		} else {
-			location.replace('./' + current_page + '/');
-		}
-	</script>
+<script>
+	const pages = ['doors', 'circles', 'red', 'blue', 'squares', 'triangles'];
+	let current_page = localStorage.getItem('doors.current_page');
+	if (current_page === null || !pages.includes(current_page)) {
+		current_page = 'doors';
+		localStorage.setItem('doors.current_page', current_page);
+	}
+	location.replace('./' + current_page + '/');
+</script>
 </body>
 </html>

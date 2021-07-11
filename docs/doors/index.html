@@ -27,6 +27,13 @@
 	</style>
 </head>
 <body>
+	<script type="module">
+		const current_page = localStorage.getItem('doors.current_page');
+		if (current_page !== 'doors') {
+			location.replace('../');
+		}
+	</script>
+
 	<div id="g_container_div"><canvas id="g_canvas"></canvas></div>
 	
 	<img id="g_bg"         src="images/bg.png" />
@@ -64,15 +71,6 @@
 	<img id="i_door32_1"   src="images/door32_1.png" />
 	<img id="i_door32_2"   src="images/door32_2.png" />
 	<img id="i_door32_3"   src="images/door32_3.png" />
-
-	<script type="module">
-		const current_page = localStorage.getItem('doors.current_page');
-		if (current_page === null) {
-			location.replace('../');
-		} else {
-			localStorage.setItem('doors.current_page', 'start');
-		}
-	</script>
 	
 	<script type="module" src="index.js"></script>
 </body>
