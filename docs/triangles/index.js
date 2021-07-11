@@ -2,33 +2,16 @@ import g from '../canvasapp.js';
 
 g.set_design_size(668, 1080);
 
-const left_closed    = g.loop(g.frames(i_left_closed), 10,   0,   0);
-const left_opened    = g.loop(g.frames(i_left_opened), 10,   0,   0);
-const left_opening   = g.once(g.frames([i_left_opening_1, i_left_opening_2, i_left_opening_3]), 11);
-const left_closing   = g.once(g.frames([i_left_opening_3, i_left_opening_2, i_left_opening_1]), 11);
+const stub_opened  = g.loop(g.frames(i_stub_0));
+const stub_closing = g.once(g.frames([i_stub_1, i_stub_2, i_stub_3, i_blank]));
 
-const left_open  = g.touch(g.circle(196, 548, 65));
-const left_close = g.touch(g.circle(196, 548, 65));
+const stub_close   = g.touch(g.circle(330, 480, 250));
 
-const touches = () => {
-	if (left_closed.started()) {
-		left_open.start();
-	} else {
-		left_close.start();
-	}
-};
+stub_close.stops(stub_opened).starts(stub_closing);
 
-const win = () => {
-	localStorage.setItem('doors.current_page', 'start');
-	location.href = '../start';
-};
+stub_closing.starts(g.goto('doors'));
 
-left_opening.starts(left_opened, touches);
-left_closing.starts(left_closed, touches);
-left_open.stops(left_closed).starts(left_opening);
-left_close.stops(left_opened).starts(left_closing);
-
-window.addEventListener('load', e => {
-	left_closed.start();
-	touches();
+window.addEventListener('load', () => {
+	stub_opened.start();
+	stub_close.start();
 });
