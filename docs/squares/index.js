@@ -48,6 +48,11 @@ const b2_upper_select  = g.touch(g.rect(155, 625 - 540, 265, 730 - 540));
 const b5_upper_select  = g.touch(g.rect(355, 620 - 545, 500, 750 - 545));
 const b10_upper_select = g.touch(g.rect(315, 815 - 550, 525, 1015 - 550));
 
+const g1_lower_f = () => {
+
+};
+
+
 g1_lower_select.stops(g1_lower).starts(p1_lower, deselect);
 g2_lower_select.stops(g2_lower).starts(p2_lower, deselect);
 g5_lower_select.stops(g5_lower).starts(p5_lower, deselect);
