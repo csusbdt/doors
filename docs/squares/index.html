@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Triangle</title>
+	<title>Squares</title>
 	<style>
 		body {
 			padding: 0;
@@ -28,21 +28,31 @@
 </head>
 <body>
 	<script type="module">
-		const current_page = localStorage.getItem('doors.current_page');
-		if (current_page !== 'squares') {
-			location.replace('../');
-		}
+		// const current_page = localStorage.getItem('doors.current_page');
+		// if (current_page !== 'squares') {
+		// 	location.replace('../');
+		// }
 	</script>
 
 	<div id="g_container_div"><canvas id="g_canvas"></canvas></div>
 	
-	<img id="g_bg"     src="../images/bg.png"     />
+	<img id="g_bg"     src="images/bg.png"     />
 	
-	<img id="i_blank"  src="../images/blank.png"  />
-	<img id="i_stub_0" src="../images/stub_0.png" />
-	<img id="i_stub_1" src="../images/stub_1.png" />
-	<img id="i_stub_2" src="../images/stub_2.png" />
-	<img id="i_stub_3" src="../images/stub_3.png" />
+	<img id="i_p1"  src="images/p1.png"  />
+	<img id="i_g1"  src="images/g1.png"  />
+	<img id="i_b1"  src="images/b1.png"  />
+
+	<img id="i_p2"  src="images/p2.png"  />
+	<img id="i_g2"  src="images/g2.png"  />
+	<img id="i_b2"  src="images/b2.png"  />
+
+	<img id="i_p5"  src="images/p5.png"  />
+	<img id="i_g5"  src="images/g5.png"  />
+	<img id="i_b5"  src="images/b5.png"  />
+
+	<img id="i_p10" src="images/p10.png" />
+	<img id="i_g10" src="images/g10.png" />
+	<img id="i_b10" src="images/b10.png" />
 	
 	<script type="module" src="index.js"></script>
 </body>
