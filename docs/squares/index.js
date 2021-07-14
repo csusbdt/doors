@@ -35,7 +35,7 @@ u_loops[1][2] = g.loop(g.frames(i_b5 ), 10, 350,  60);
 s_loops[1][3] = g.loop(g.frames(i_p10), 10, 300, 250);
 u_loops[1][3] = g.loop(g.frames(i_b10), 10, 300, 250);
 
-const goto_doors = g.delay(.7).starts(g.from_to('squares', 'doors'));
+const goto_doors = g.delay(.7).starts(g.goto('doors'));
 
 const deselect = g.touch(g.rect(0, 0, 660, 1080));
 

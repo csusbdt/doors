@@ -24,19 +24,19 @@ function start_start_sets(...start_sets) {
 	});
 }
 
-function from_to(src, dst) {
+function goto(page) {
 	return () => {
-		let completed_string = localStorage.getItem('doors.completed');
-		if (completed_string === null) {
-			localStorage.setItem('doors.completed', src);
+		let visited_string = localStorage.getItem('doors.visited');
+		if (visited_string === null) {
+			localStorage.setItem('doors.visited', page);
 		} else {
-			const completed = completed_string.split(',');
-			if (!completed.includes(src)) {
-				completed.push(src);
-				localStorage.setItem('doors.completed', completed.join());
+			const visited = visited_string.split(',');
+			if (!visited.includes(page)) {
+				visited.push(page);
+				localStorage.setItem('doors.visited', visited.join());
 			}
 		}
-		localStorage.setItem('doors.current_page', dst);
+		localStorage.setItem('doors.current_page', page);
 		location.replace('../');
 	};
 }
@@ -538,7 +538,7 @@ requestAnimationFrame(animation_loop);
 export default {
 	log: log,
 	set_design_size: set_design_size,
-	from_to: from_to,
+	goto: goto,
 	stop_stop_sets: stop_stop_sets,
 	start_start_sets: start_start_sets,
 	circle: circle,

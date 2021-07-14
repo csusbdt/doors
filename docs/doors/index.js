@@ -2,16 +2,16 @@ import g from '../canvasapp.js';
 
 g.set_design_size(668, 1080);
 
-const circle11        = g.loop(g.frames(i_circle  ), 10,   0,   0);
-const square12        = g.loop(g.frames(i_square  ), 10, 337,   8);
-const square21        = g.loop(g.frames(i_square  ), 10,  36, 349);
-const triangle22      = g.loop(g.frames(i_triangle), 10, 339, 357);
-const triangle31      = g.loop(g.frames(i_triangle), 10,  53, 698);
-const circle32        = g.loop(g.frames(i_circle  ), 10, 347, 696);
+const circle11       = g.loop(g.frames(i_circle  ), 10,   0,   0);
+const square12       = g.loop(g.frames(i_square  ), 10, 337,   8);
+const square21       = g.loop(g.frames(i_square  ), 10,  36, 349);
+const triangle22     = g.loop(g.frames(i_triangle), 10, 339, 357);
+const triangle31     = g.loop(g.frames(i_triangle), 10,  53, 698);
+const circle32       = g.loop(g.frames(i_circle  ), 10, 347, 696);
 
-const goto_circles   = g.delay(.3).starts(g.from_to('doors', 'circles'   )); 
-const goto_squares   = g.delay(.3).starts(g.from_to('doors', 'squares'   )); 
-const goto_triangles = g.delay(.3).starts(g.from_to('doors', 'triangles' )); 
+const goto_circles   = g.delay(.3).starts(g.goto('circles'  ));
+const goto_squares   = g.delay(.3).starts(g.goto('squares'  ));
+const goto_triangles = g.delay(.3).starts(g.goto('triangles'));
 
 const door11_closed  = g.loop(g.frames(i_door11_0));
 const door12_closed  = g.loop(g.frames(i_door12_0));

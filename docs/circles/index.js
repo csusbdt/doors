@@ -22,8 +22,8 @@ const b = [
 	g.loop(g.frames(i_b6))
 ];
 
-const goto_red  = g.delay(1).starts(g.from_to('circles', 'red' )); 
-const goto_blue = g.delay(1).starts(g.from_to('circles', 'blue')); 
+const goto_red  = g.delay(1).starts(g.goto('red' )); 
+const goto_blue = g.delay(1).starts(g.goto('blue')); 
 
 const c = [
 	g.circle(350,  97, 70),

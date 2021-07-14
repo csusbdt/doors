@@ -18,17 +18,13 @@ const ok_close   = g.touch(g.rect(125, 800, 483, 985));
 
 ok_close.stops(ok_opened).starts(ok_closing);
 
-ok_closing.starts(g.from_to('triangles', 'doors'));
+ok_closing.starts(g.goto('doors'));
 
 window.addEventListener('load', () => {
-	const completed_string = localStorage.getItem('doors.completed');
-	const completed = completed_string.split(',');
-	if (!completed.includes('triangles')) {
-		completed.push('triangles');
-		localStorage.setItem('doors.completed', completed.join());
-	}
-	if (completed.length <= counts.length) {
-		counts[completed.length - 1].start();
+	const visited_string = localStorage.getItem('doors.visited');
+	const visited = visited_string.split(',');
+	if (visited.length <= counts.length) {
+		counts[visited.length - 1].start();
 	}
 	ok_opened.start();
 	ok_close.start();
