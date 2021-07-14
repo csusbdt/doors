@@ -1,3 +1,8 @@
+import { 
+	goto as state_goto, 
+	number_of_visited_pages as state_number_of_visited_pages 
+} from './state.js';
+
 //#region utility functions
 
 const log = function(...args) {
@@ -25,20 +30,11 @@ function start_start_sets(...start_sets) {
 }
 
 function goto(page) {
-	return () => {
-		let visited_string = localStorage.getItem('doors.visited');
-		if (visited_string === null) {
-			localStorage.setItem('doors.visited', page);
-		} else {
-			const visited = visited_string.split(',');
-			if (!visited.includes(page)) {
-				visited.push(page);
-				localStorage.setItem('doors.visited', visited.join());
-			}
-		}
-		localStorage.setItem('doors.current_page', page);
-		location.replace('../');
-	};
+	return () => state_goto(page);
+}
+
+function number_of_visited_pages() {
+	return state_number_of_visited_pages();
 }
 
 //#endregion
@@ -539,6 +535,7 @@ export default {
 	log: log,
 	set_design_size: set_design_size,
 	goto: goto,
+	number_of_visited_pages: number_of_visited_pages,
 	stop_stop_sets: stop_stop_sets,
 	start_start_sets: start_start_sets,
 	circle: circle,

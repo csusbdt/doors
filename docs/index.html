@@ -3,23 +3,8 @@
 	<title>Doors</title>
 </head>
 <body>
-<script type="module">
-	let current_page = localStorage.getItem('doors.current_page');
-	if (current_page === null) {
-		current_page = 'triangles';
-		localStorage.setItem('doors.current_page', current_page);
-	}
-	let visited_string = localStorage.getItem('doors.visited');
-	if (visited_string === null) {
-		localStorage.setItem('doors.visited', current_page);
-	} else {
-		const visited = visited_string.split(',');
-		if (!visited.includes(current_page)) {
-			visited.push(current_page);
-			localStorage.setItem('doors.visited', visited.join());
-		}
-	}
-	location.replace(current_page);
+<script type = "module">
+	location.replace('triangles/');
 </script>
 </body>
 </html>

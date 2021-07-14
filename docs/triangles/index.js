@@ -21,11 +21,7 @@ ok_close.stops(ok_opened).starts(ok_closing);
 ok_closing.starts(g.goto('doors'));
 
 window.addEventListener('load', () => {
-	const visited_string = localStorage.getItem('doors.visited');
-	const visited = visited_string.split(',');
-	if (visited.length <= counts.length) {
-		counts[visited.length - 1].start();
-	}
+	counts[g.number_of_visited_pages() - 1].start();
 	ok_opened.start();
 	ok_close.start();
 });
