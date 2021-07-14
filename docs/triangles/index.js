@@ -2,16 +2,34 @@ import g from '../canvasapp.js';
 
 g.set_design_size(668, 1080);
 
-const stub_opened  = g.loop(g.frames(i_stub_0));
-const stub_closing = g.once(g.frames([i_stub_1, i_stub_2, i_stub_3, i_blank]));
+const counts = [
+	g.loop(g.frames(i_1)),
+	g.loop(g.frames(i_2)),
+	g.loop(g.frames(i_3)),
+	g.loop(g.frames(i_4)),
+	g.loop(g.frames(i_5)),
+	g.loop(g.frames(i_6))
+];
 
-const stub_close   = g.touch(g.circle(330, 480, 250));
+const ok_opened  = g.loop(g.frames(i_ok_0));
+const ok_closing = g.once(g.frames([i_ok_1, i_ok_2, i_blank]));
 
-stub_close.stops(stub_opened).starts(stub_closing);
+const ok_close   = g.touch(g.rect(125, 800, 483, 985));
 
-stub_closing.starts(g.goto('doors'));
+ok_close.stops(ok_opened).starts(ok_closing);
+
+ok_closing.starts(g.from_to('triangles', 'doors'));
 
 window.addEventListener('load', () => {
-	stub_opened.start();
-	stub_close.start();
+	const completed_string = localStorage.getItem('doors.completed');
+	const completed = completed_string.split(',');
+	if (!completed.includes('triangles')) {
+		completed.push('triangles');
+		localStorage.setItem('doors.completed', completed.join());
+	}
+	if (completed.length <= counts.length) {
+		counts[completed.length - 1].start();
+	}
+	ok_opened.start();
+	ok_close.start();
 });

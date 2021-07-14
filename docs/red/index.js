@@ -23,7 +23,7 @@ door_open.stops(door_closed).starts(man_start, door_opening);
 door_opening.starts(door_opened, g.delay(1).stops(smoke), g.delay(1.6).stops(man_start).starts(man_walking));
 man_walking.starts(man_end, g.delay(1.2).starts(head, sun_close));
 sun_close.stops(sun_opened).starts(sun_closing);
-sun_closing.starts(g.goto('doors'));
+sun_closing.starts(g.from_to('red', 'doors'));
 
 window.addEventListener('load', () => {
 	door_closed.start();

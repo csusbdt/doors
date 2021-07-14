@@ -4,9 +4,8 @@
 </head>
 <body>
 <script>
-	const pages = ['doors', 'circles', 'red', 'blue', 'squares', 'triangles'];
 	let current_page = localStorage.getItem('doors.current_page');
-	if (current_page === null || !pages.includes(current_page)) {
+	if (current_page === null) {
 		current_page = 'doors';
 		localStorage.setItem('doors.current_page', current_page);
 	}

@@ -24,9 +24,19 @@ function start_start_sets(...start_sets) {
 	});
 }
 
-function goto(page) {
+function from_to(src, dst) {
 	return () => {
-		localStorage.setItem('doors.current_page', page);
+		let completed_string = localStorage.getItem('doors.completed');
+		if (completed_string === null) {
+			localStorage.setItem('doors.completed', src);
+		} else {
+			const completed = completed_string.split(',');
+			if (!completed.includes(src)) {
+				completed.push(src);
+				localStorage.setItem('doors.completed', completed.join());
+			}
+		}
+		localStorage.setItem('doors.current_page', dst);
 		location.replace('../');
 	};
 }
@@ -528,7 +538,7 @@ requestAnimationFrame(animation_loop);
 export default {
 	log: log,
 	set_design_size: set_design_size,
-	goto: goto,
+	from_to: from_to,
 	stop_stop_sets: stop_stop_sets,
 	start_start_sets: start_start_sets,
 	circle: circle,

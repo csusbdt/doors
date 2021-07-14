@@ -9,6 +9,10 @@ const triangle22      = g.loop(g.frames(i_triangle), 10, 339, 357);
 const triangle31      = g.loop(g.frames(i_triangle), 10,  53, 698);
 const circle32        = g.loop(g.frames(i_circle  ), 10, 347, 696);
 
+const goto_circles   = g.delay(.3).starts(g.from_to('doors', 'circles'   )); 
+const goto_squares   = g.delay(.3).starts(g.from_to('doors', 'squares'   )); 
+const goto_triangles = g.delay(.3).starts(g.from_to('doors', 'triangles' )); 
+
 const door11_closed  = g.loop(g.frames(i_door11_0));
 const door12_closed  = g.loop(g.frames(i_door12_0));
 const door21_closed  = g.loop(g.frames(i_door21_0));
@@ -121,8 +125,7 @@ const show_circle = () => {
 	if (triangles === 1 || squares === 1) {
 		reset();
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
-		localStorage.setItem('doors.current_page', 'circles');
-		location.replace('../');
+		goto_circles.start();
 	} else {
 		touches();
 	}
@@ -133,8 +136,7 @@ const show_square = () => {
 	if (circles === 1 || triangles === 1) {
 		reset();
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
-		localStorage.setItem('doors.current_page', 'squares');
-		location.replace('../');
+		goto_squares.start();
 	} else {
 		touches();
 	}
@@ -145,8 +147,7 @@ const show_triangle = () => {
 	if (circles === 1 || squares === 1) {
 		reset();
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
-		localStorage.setItem('doors.current_page', 'triangles');
-		location.replace('../');
+		goto_triangles.start();
 	} else {
 		touches();
 	}
