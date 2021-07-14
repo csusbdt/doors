@@ -4,20 +4,24 @@ const log = function(...args) {
 	args.forEach(arg => console.log(arg));
 };
 
-function stop(stop_set) {
-	stop_set.forEach(o => o.stop());
+function stop_stop_sets(...stop_sets) {
+	stop_sets.forEach(stop_set => {
+		stop_set.forEach(o => o.stop())
+	});
 }
 
-function start(start_set) {
-	start_set.forEach(o => {
-		if (typeof(o) === 'function') {
-			o();
-		} else if ('play' in o) {
-			o.play();
-		} else {
-			o.start();
-		}
-	});	
+function start_start_sets(...start_sets) {
+	start_sets.forEach(start_set => {
+		start_set.forEach(o => {
+			if (typeof(o) === 'function') {
+				o();
+			} else if ('play' in o) {
+				o.play();
+			} else {
+				o.start();
+			}
+		});
+	});
 }
 
 function goto(page) {
@@ -137,8 +141,8 @@ c_delay.prototype.update = function(dt) {
 	this.elapsed_time += dt;
 	if (this.elapsed_time > this.t) {
 		remove_updatable(this);
-		stop(this.stop_set);
-		start(this.start_set);
+		stop_stop_sets(this.stop_set);
+		start_start_sets(this.start_set);
 	}
 };
 
@@ -196,8 +200,8 @@ c_once.prototype.update = function(dt) {
 			this.frame_index = 0;
 			remove_drawable(this);
 			remove_updatable(this);
-			stop(this.stop_set);
-			start(this.start_set);
+			stop_stop_sets(this.stop_set);
+			start_start_sets(this.start_set);
 		}
 	}
 };
@@ -311,8 +315,8 @@ c_touch.prototype.touch = function(x, y) {
 			if (!this.independent) {
 				touchables = touchables.filter(o => o.independent);
 			}
-			stop(this.stop_set);
-			start(this.start_set);
+			stop_stop_sets(this.stop_set);
+			start_start_sets(this.start_set);
 			return true;
 		}
 	}
@@ -525,9 +529,8 @@ export default {
 	log: log,
 	set_design_size: set_design_size,
 	goto: goto,
-//	clear_drawables: clear_drawables,
-//	clear_updatables: clear_updatables,
-	start: start,
+	stop_stop_sets: stop_stop_sets,
+	start_start_sets: start_start_sets,
 	circle: circle,
 	rect: rect,
 	frame: frame,
