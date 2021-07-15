@@ -10,7 +10,7 @@ const triangle31     = g.loop(g.frames(i_triangle), 10,  53, 698);
 const circle32       = g.loop(g.frames(i_circle  ), 10, 347, 696);
 
 const goto_circles   = g.delay(.3).starts(g.goto('circles'  ));
-const goto_squares   = g.delay(.3).starts(g.goto('squares'  ));
+const goto_squares   = g.delay(.3).starts(g.goto('s1'  ));
 const goto_triangles = g.delay(.3).starts(g.goto('triangles'));
 
 const door11_closed  = g.loop(g.frames(i_door11_0));
