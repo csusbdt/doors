@@ -1,5 +1,5 @@
 const initial_state = {
-	version: '0',
+	version: '1',
 	pages: [ 'doors', 'triangles', 'circles', 'red', 'blue', 'squares', 's1', 's2' ],
 	page: 'triangles',
 	visited: [ false, true, false, false, false, false, false, false ]
