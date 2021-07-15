@@ -20,8 +20,8 @@ const door_open = g.touch(g.circle(473, 703, 60));
 const sun_close = g.touch(g.circle(156, 330, 60));
 
 door_open.stops(door_closed).starts(man_start, door_opening);
-door_opening.starts(door_opened, g.delay(1).stops(smoke), g.delay(1.6).stops(man_start).starts(man_walking));
-man_walking.starts(man_end, g.delay(1.2).starts(head, sun_close));
+door_opening.starts(door_opened, g.delay(1).stops(smoke), g.delay(.3).stops(man_start).starts(man_walking));
+man_walking.starts(man_end, g.delay(.3).starts(head, sun_close));
 sun_close.stops(sun_opened).starts(sun_closing);
 sun_closing.starts(g.goto('doors'));
 

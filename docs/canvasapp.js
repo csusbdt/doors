@@ -1,6 +1,6 @@
 import { 
-	goto as state_goto, 
-	number_of_visited_pages as state_number_of_visited_pages 
+	get_state as state_get_state,
+	goto as state_goto
 } from './state.js';
 
 //#region utility functions
@@ -33,8 +33,8 @@ function goto(page) {
 	return () => state_goto(page);
 }
 
-function number_of_visited_pages() {
-	return state_number_of_visited_pages();
+function get_state() {
+	return state_get_state();
 }
 
 //#endregion
@@ -535,7 +535,7 @@ export default {
 	log: log,
 	set_design_size: set_design_size,
 	goto: goto,
-	number_of_visited_pages: number_of_visited_pages,
+	get_state: get_state,
 	stop_stop_sets: stop_stop_sets,
 	start_start_sets: start_start_sets,
 	circle: circle,
