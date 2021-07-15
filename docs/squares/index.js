@@ -35,8 +35,6 @@ u_loops[1][2] = g.loop(g.frames(i_b5 ), 10, 350,  60);
 s_loops[1][3] = g.loop(g.frames(i_p10), 10, 300, 250);
 u_loops[1][3] = g.loop(g.frames(i_b10), 10, 300, 250);
 
-const goto_doors = g.delay(.7).starts(g.goto('doors'));
-
 const deselect = g.touch(g.rect(0, 0, 660, 1080));
 
 touches[0][0] = g.touch(g.rect(175, 875, 250, 950));
@@ -57,9 +55,15 @@ const squares = [
 ];
 let zone = 0;
 let units = 17;
+let next_page = null;
 
 const view = () => {
 	let win = true;
+	if (squares[0].zone === 0 && squares[1].zone === 1 && squares[2].zone === 1 && squares[3].zone === 1) {
+		next_page = 's1';
+	} else if (squares[0].zone === 1 && squares[1].zone === 0 && squares[2].zone === 1 && squares[3].zone === 1) {
+		next_page = 's2';
+	}
 	squares.forEach(o => win = o.zone === 0 ? false : win);
 	g.stop_stop_sets(s_loops[0], s_loops[1], u_loops[0], u_loops[1], s_unit_loops[0], s_unit_loops[1], u_unit_loops);
 	let selected_cost = 0;
@@ -81,7 +85,7 @@ const view = () => {
 		}
 	});
 	if (win) {
-		goto_doors.start();
+		g.delay(.7).starts(g.goto(next_page)).start();
 	} else {
 		deselect.start();
 	}
