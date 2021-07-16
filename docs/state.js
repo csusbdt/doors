@@ -1,11 +1,11 @@
 const initial_state = {
-	version: '3',
+	version: '4',
 	pages: [ 'doors', 'triangles', 'circles', 'red', 'blue', 's1' ],
-	page: 'triangles',
+	page: 'doors',
 	visited: []
 };
 for (let i = 0; i < initial_state.pages.length; ++i) {
-	if (i === 1) {
+	if (i === 0) {
 		initial_state.visited.push(true);
 	} else {
 		initial_state.visited.push(false);
