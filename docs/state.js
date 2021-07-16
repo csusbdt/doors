@@ -1,6 +1,6 @@
 const initial_state = {
-	version: '4',
-	pages: [ 'doors', 'triangles', 'circles', 'red', 'blue', 's1' ],
+	version: '5',
+	pages: [ 'doors', 'triangles', 'circles', 'red', 'blue', 'car' ],
 	page: 'doors',
 	visited: []
 };
