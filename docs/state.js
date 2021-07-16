@@ -1,5 +1,5 @@
 const initial_state = {
-	version: '2',
+	version: '3',
 	pages: [ 'doors', 'triangles', 'circles', 'red', 'blue', 's1' ],
 	page: 'triangles',
 	visited: []
@@ -20,12 +20,21 @@ export const save_state = () => {
 	localStorage.setItem('doors', JSON.stringify(state));
 };
 
+export const visited = page => {
+	const i = state.pages.indexOf(page);
+	if (i === -1) throw new Error('unknown page: ' + page);
+	return state.visited[i];
+};
+
 export const goto = page => {
 	state.page = page;
-	state.visited[state.pages.indexOf(page)] = true;
+	const i = state.pages.indexOf(page);
+	if (i === -1) throw new Error('unknown page: ' + page);
+	state.visited[i] = true;
 	save_state();
 	location.replace('../' + page);
 };
+
 
 // load state 
 

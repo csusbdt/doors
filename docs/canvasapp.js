@@ -1,5 +1,6 @@
 import { 
 	get_state as state_get_state,
+	visited as state_visited,
 	goto as state_goto
 } from './state.js';
 
@@ -534,6 +535,7 @@ requestAnimationFrame(animation_loop);
 export default {
 	log: log,
 	set_design_size: set_design_size,
+	visited: state_visited,
 	goto: goto,
 	get_state: get_state,
 	stop_stop_sets: stop_stop_sets,

@@ -2,6 +2,11 @@ import g from '../canvasapp.js';
 
 g.set_design_size(668, 1080);
 
+const blue_border = g.loop(g.frames(i_blue_border));
+const blue        = g.loop(g.frames(i_blue       ));
+const red_border  = g.loop(g.frames(i_red_border ));
+const red         = g.loop(g.frames(i_red        ));
+
 const r = [
 	g.loop(g.frames(i_r0)),
 	g.loop(g.frames(i_r1)),
@@ -81,6 +86,7 @@ t[3].starts(() => {
 		if (s[5] === 1 && s[6] === 1) {
 			t.forEach(o => o.stop());
 			u.stop();
+			red.start();
 			goto_red.start();	
 		}
 	} else if (s[3] === 1 && s[4] === 2 && s[5] === 0) move(3, 5);
@@ -89,6 +95,7 @@ t[3].starts(() => {
 		if (s[1] === 2 && s[0] === 2) {
 			t.forEach(o => o.stop());
 			u.stop();
+			blue.start();
 			goto_blue.start();
 		}
 	} else if (s[3] === 2 && s[2] === 1 && s[1] === 0) move(3, 1);
@@ -127,6 +134,16 @@ const reset = () => {
 u.starts(reset);
 
 window.addEventListener('load', () => {
+	if (g.visited('red')) {
+		red.start();
+	} else {
+		red_border.start();
+	}
+	if (g.visited('blue')) {
+		blue.start();
+	} else {
+		blue_border.start();
+	}
 	reset();
 	t.forEach(o => o.start());
 	u.start();
