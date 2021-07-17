@@ -1,19 +1,17 @@
 const initial_state = {
-	version: '5',
+	version: '6',
 	pages: [ 'doors', 'triangles', 'circles', 'red', 'box', 'car' ],
 	page: 'doors',
 	visited: [],
-	solved: []
+	solved: [],
+	back: []
 };
 for (let i = 0; i < initial_state.pages.length; ++i) {
-	if (i === 0) {
-		initial_state.visited.push(true);
-		initial_state.solved.push(false);
-	} else {
-		initial_state.visited.push(false);
-		initial_state.solved.push(false);
-	}
+	initial_state.visited.push(false);
+	initial_state.solved.push(false);
+	initial_state.back.push(null);
 }
+initial_state.visited[0] = true;
 
 let state = null;
 
