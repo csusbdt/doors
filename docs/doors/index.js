@@ -2,12 +2,13 @@ import g from '../canvasapp.js';
 
 g.set_design_size(668, 1080);
 
-const circle_filled    = g.loop(g.frames(i_circle_filled));
-const square_filled    = g.loop(g.frames(i_square_filled));
-const triangle_filled  = g.loop(g.frames(i_triangle_filled));
-const circle_border    = g.loop(g.frames(i_circle_border));
-const square_border    = g.loop(g.frames(i_square_border));
-const triangle_border  = g.loop(g.frames(i_triangle_border));
+const adj_x = 210;
+const circle_filled    = g.loop(g.frames(i_circle_filled), 10, adj_x);
+const square_filled    = g.loop(g.frames(i_square_filled), 10, adj_x);
+const triangle_filled  = g.loop(g.frames(i_triangle_filled), 10, adj_x);
+const circle_border    = g.loop(g.frames(i_circle_border), 10, adj_x);
+const square_border    = g.loop(g.frames(i_square_border), 10, adj_x);
+const triangle_border  = g.loop(g.frames(i_triangle_border), 10, adj_x);
 
 const door_frames    = g.loop(g.frames(i_door_frames));
 
