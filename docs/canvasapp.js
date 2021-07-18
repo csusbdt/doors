@@ -232,6 +232,18 @@ function c_loop(frames, z_index = 10, dx = 0, dy = 0) {
 	this.dy = dy;
 }
 
+c_loop.prototype.set_dx = function(dx) {
+	this.dx = dx;
+	dirty = true;
+	return this;
+}
+
+c_loop.prototype.set_dy = function(dy) {
+	this.dy = dy;
+	dirty = true;
+	return this;
+}
+
 c_loop.prototype.start = function() {
 	this.frame_index  = 0;
 	this.elapsed_time = 0;
