@@ -1,23 +1,17 @@
 <script>
-/*
-This code uses depth-first search with iterative deepening to
-determine if a puzzle has a solution using n or fewer nodes.
-The type of puzzle investigated this way is exemplified by
-the puzzle in the page implemented in this folder.
-*/
 
 const cols = 2;
 const rows = 4;
 
 //#region cell
 
-function c_cell(cell) { // copy constructor
+function c_cell(cell) {
 	this.c = cell.c;
 	this.r = cell.r;
 }
 
-c_cell.prototype.to_string = function() {
-	return '' + this.c + this.r;
+c_cell.prototype.key = function() {
+	return '' + String(this.c).padStart(2, '0') + String(this.r).padStart(2, '0');
 };
 
 c_cell.prototype.eq = function(cell) {
@@ -29,15 +23,15 @@ c_cell.prototype.left_of = function(cell) {
 };
 
 c_cell.prototype.right_of = function(cell) {
-	this.c === cell.c + 1 && this.r === cell.r;
+	return this.c === cell.c + 1 && this.r === cell.r;
 };
 
 c_cell.prototype.below = function(cell) {
-	this.c === cell.c && this.r === cell.r + 1;
+	return this.c === cell.c && this.r === cell.r + 1;
 };
 
 c_cell.prototype.above = function(cell) {
-	this.c === cell.c && this.r === cell.r - 1;
+	return this.c === cell.c && this.r === cell.r - 1;
 };
 
 //#endregion
@@ -47,8 +41,8 @@ c_cell.prototype.above = function(cell) {
 const visited_map = new Map();
 
 function c_state(state) {
-	this.box = new c_cell(state.box);
-	this.up  = new c_cell(state.up );
+	this.box         = new c_cell(state.box);
+	this.up          = new c_cell(state.up );
 	this.parent      = null;
 	this.left_child  = null;
 	this.right_child = null;
@@ -56,33 +50,26 @@ function c_state(state) {
 	this.down_child  = null;
 }
 
-c_state.prototype.print_path = function() {
-	if (this !== root) {
-		if      (this.parent.left_child  === this) console.log("left" );
-		else if (this.parent.right_child === this) console.log("right");
-		else if (this.parent.up_child    === this) console.log("up"   );
-		else if (this.parent.down_child  === this) console.log("down" );
-		this.parent.print_path();
-	}
-};
-
 c_state.prototype.goal = function() {
 	return this.box.eq(box_goal) && !this.up.eq(box_goal);
 };
 
 c_state.prototype.key = function() {
-	return this.box.to_string() + this.up.to_string();
+	return this.box.key() + this.up.key();
 };
 
 c_state.prototype.eq = function(state) {
-	this.box.eq(state.box) && this.up.eq(state.up);
+	return this.box.eq(state.box) && this.up.eq(state.up);
 };
 
+let done = false;
+
 c_state.prototype.visit_children = function(depth) {
-	if (--depth === 0) {
-		console.log("no solution");
+	--depth;
+	if (depth === 0) {
 		return;
 	}
+	// visit left
 	if (this.box.c > 0 && !this.box.right_of(this.up)) {
 		const s = new c_state(this);
 		if (this.box.eq(this.up)) --s.up.c;
@@ -93,11 +80,14 @@ c_state.prototype.visit_children = function(depth) {
 			visited_map.set(s.key(), s);
 			if (s.goal()) {
 				s.print_path();
+				done = true;
 				return;
 			}
 			s.visit_children(depth);
+			if (done) return;
 		}
 	}
+	// visit right
 	if (this.box.c < cols - 1 && !this.box.left_of(this.up)) {
 		const s = new c_state(this);
 		if (this.box.eq(this.up)) ++s.up.c;
@@ -108,11 +98,14 @@ c_state.prototype.visit_children = function(depth) {
 			visited_map.set(s.key(), s);
 			if (s.goal()) {
 				s.print_path();
-				return;
+				done = true;
+				return false;
 			}
 			s.visit_children(depth);
+			if (done) return;
 		}
 	}
+	// visit up
 	if (this.box.r > 0 && !this.box.below(this.up)) {
 		const s = new c_state(this);
 		--s.box.r;
@@ -122,11 +115,14 @@ c_state.prototype.visit_children = function(depth) {
 			visited_map.set(s.key(), s);
 			if (s.goal()) {
 				s.print_path();
-				return;
+				done = true;
+				return false;
 			}
 			s.visit_children(depth);
+			if (done) return;
 		}
 	}
+	// visit down
 	if (this.box.r < rows - 1) {
 		const s = new c_state(this);
 		if (this.box.eq(this.up)) ++s.up.r;
@@ -137,10 +133,29 @@ c_state.prototype.visit_children = function(depth) {
 			visited_map.set(s.key(), s);
 			if (s.goal()) {
 				s.print_path();
-				return;
+				done = true;
+				return false;
 			}
 			s.visit_children(depth);
+			if (done) return;
 		}
+	}
+};
+
+c_state.prototype.print_path = function(path) {
+	if (typeof(path) === 'undefined') {
+		path = [];
+	}
+	if (this === root) {
+		document.writeln("<pre>")
+		path.reverse().forEach(e => document.writeln('  ' + e));
+		document.writeln("\n</pre>")
+	} else {
+		if      (this === this.parent.left_child ) path.push("left" );
+		else if (this === this.parent.right_child) path.push("right");
+		else if (this === this.parent.up_child   ) path.push("up"   );
+		else if (this === this.parent.down_child ) path.push("down" );
+		this.parent.print_path(path);
 	}
 };
 
@@ -149,8 +164,8 @@ c_state.prototype.visit_children = function(depth) {
 //#region start
 
 const box_start = new c_cell({ c: 0, r: 0 });
-const box_goal  = new c_cell({ c: 0, r: 3 });
-const up_start  = new c_cell({ c: 0, r: 3 });
+const box_goal  = new c_cell({ c: 0, r: 2 });
+const up_start  = new c_cell({ c: 1, r: 1 });
 
 const root = new c_state({
 	box: box_start,
@@ -159,12 +174,16 @@ const root = new c_state({
 
 visited_map.set(root.key(), root);
 
-console.log('running');
-document.writeln('<pre>');
-document.writeln('running');
-root.visit_children(12);
-document.writeln('completed');
-document.writeln('</pre>');
+const max_depth = 12;
+document.writeln("<pre>")
+document.writeln('running with max_depth ' + max_depth);
+root.visit_children(max_depth);
+if (!done) {
+	document.writeln("<pre>")	
+	document.write('solution not found');
+	document.writeln("\n</pre>")
+}
+document.writeln("\n</pre>")
 
 //#endregion
 
