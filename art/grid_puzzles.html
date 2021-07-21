@@ -1,7 +1,12 @@
 <script>
 
-const cols = 2;
-const rows = 4;
+const cols      = 2;
+const rows      = 4;
+const max_depth = 12;
+
+const box_start = new c_cell({ c: 0, r: 0 });
+const box_goal  = new c_cell({ c: 0, r: 2 });
+const up_start  = new c_cell({ c: 1, r: 1 });
 
 //#region cell
 
@@ -163,10 +168,6 @@ c_state.prototype.print_path = function(path) {
 
 //#region start
 
-const box_start = new c_cell({ c: 0, r: 0 });
-const box_goal  = new c_cell({ c: 0, r: 2 });
-const up_start  = new c_cell({ c: 1, r: 1 });
-
 const root = new c_state({
 	box: box_start,
 	up : up_start
@@ -174,7 +175,6 @@ const root = new c_state({
 
 visited_map.set(root.key(), root);
 
-const max_depth = 12;
 document.writeln("<pre>")
 document.writeln('running with max_depth ' + max_depth);
 root.visit_children(max_depth);
