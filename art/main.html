@@ -1,0 +1,171 @@
+<script>
+/*
+This code uses depth-first search with iterative deepening to
+determine if a puzzle has a solution using n or fewer nodes.
+The type of puzzle investigated this way is exemplified by
+the puzzle in the page implemented in this folder.
+*/
+
+const cols = 2;
+const rows = 4;
+
+//#region cell
+
+function c_cell(cell) { // copy constructor
+	this.c = cell.c;
+	this.r = cell.r;
+}
+
+c_cell.prototype.to_string = function() {
+	return '' + this.c + this.r;
+};
+
+c_cell.prototype.eq = function(cell) {
+	return this.c === cell.c && this.r === cell.r;
+};
+
+c_cell.prototype.left_of = function(cell) {
+	return this.c === cell.c - 1 && this.r === cell.r;
+};
+
+c_cell.prototype.right_of = function(cell) {
+	this.c === cell.c + 1 && this.r === cell.r;
+};
+
+c_cell.prototype.below = function(cell) {
+	this.c === cell.c && this.r === cell.r + 1;
+};
+
+c_cell.prototype.above = function(cell) {
+	this.c === cell.c && this.r === cell.r - 1;
+};
+
+//#endregion
+
+//#region state
+
+const visited_map = new Map();
+
+function c_state(state) {
+	this.box = new c_cell(state.box);
+	this.up  = new c_cell(state.up );
+	this.parent      = null;
+	this.left_child  = null;
+	this.right_child = null;
+	this.up_child    = null;
+	this.down_child  = null;
+}
+
+c_state.prototype.print_path = function() {
+	if (this !== root) {
+		if      (this.parent.left_child  === this) console.log("left" );
+		else if (this.parent.right_child === this) console.log("right");
+		else if (this.parent.up_child    === this) console.log("up"   );
+		else if (this.parent.down_child  === this) console.log("down" );
+		this.parent.print_path();
+	}
+};
+
+c_state.prototype.goal = function() {
+	return this.box.eq(box_goal) && !this.up.eq(box_goal);
+};
+
+c_state.prototype.key = function() {
+	return this.box.to_string() + this.up.to_string();
+};
+
+c_state.prototype.eq = function(state) {
+	this.box.eq(state.box) && this.up.eq(state.up);
+};
+
+c_state.prototype.visit_children = function(depth) {
+	if (--depth === 0) {
+		console.log("no solution");
+		return;
+	}
+	if (this.box.c > 0 && !this.box.right_of(this.up)) {
+		const s = new c_state(this);
+		if (this.box.eq(this.up)) --s.up.c;
+		--s.box.c;
+		if (!visited_map.has(s.key())) {
+			this.left_child = s;
+			s.parent = this;
+			visited_map.set(s.key(), s);
+			if (s.goal()) {
+				s.print_path();
+				return;
+			}
+			s.visit_children(depth);
+		}
+	}
+	if (this.box.c < cols - 1 && !this.box.left_of(this.up)) {
+		const s = new c_state(this);
+		if (this.box.eq(this.up)) ++s.up.c;
+		++s.box.c;
+		if (!visited_map.has(s.key())) {
+			this.right_child = s;
+			s.parent = this;
+			visited_map.set(s.key(), s);
+			if (s.goal()) {
+				s.print_path();
+				return;
+			}
+			s.visit_children(depth);
+		}
+	}
+	if (this.box.r > 0 && !this.box.below(this.up)) {
+		const s = new c_state(this);
+		--s.box.r;
+		if (!visited_map.has(s.key())) {
+			this.up_child = s;
+			s.parent = this;
+			visited_map.set(s.key(), s);
+			if (s.goal()) {
+				s.print_path();
+				return;
+			}
+			s.visit_children(depth);
+		}
+	}
+	if (this.box.r < rows - 1) {
+		const s = new c_state(this);
+		if (this.box.eq(this.up)) ++s.up.r;
+		++s.box.r;
+		if (!visited_map.has(s.key())) {
+			this.down_child = s;
+			s.parent = this;
+			visited_map.set(s.key(), s);
+			if (s.goal()) {
+				s.print_path();
+				return;
+			}
+			s.visit_children(depth);
+		}
+	}
+};
+
+//#endregion
+
+//#region start
+
+const box_start = new c_cell({ c: 0, r: 0 });
+const box_goal  = new c_cell({ c: 0, r: 3 });
+const up_start  = new c_cell({ c: 0, r: 3 });
+
+const root = new c_state({
+	box: box_start,
+	up : up_start
+});
+
+visited_map.set(root.key(), root);
+
+console.log('running');
+document.writeln('<pre>');
+document.writeln('running');
+root.visit_children(12);
+document.writeln('completed');
+document.writeln('</pre>');
+
+//#endregion
+
+</script>
