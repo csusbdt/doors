@@ -1,7 +1,7 @@
 const initial_state = {
-	version: '6',
-	pages: [ 'doors', 'triangles', 'circles', 'red', 'box', 'car' ],
 	page: 'doors',
+	version: '6',
+	pages: [ 'doors', 'triangles', 'circles', 'red', 'grid1', 'car' ],
 	visited: [],
 	solved: [],
 	back: []

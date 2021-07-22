@@ -1,0 +1,41 @@
+<script>
+
+const cols = 2;
+const rows = 4;
+
+
+
+function c_state() {
+	this.path = [];
+}
+
+c_state.prototype.key = function() {
+	return "";
+};
+
+c_state.prototype.visit_children = function() {
+	if (this.path.length + 1 > max_path_length) return;
+};
+
+c_state.prototype.visit = function(move) {
+
+};
+
+const max_path_length = 8;
+
+const states = new Map();
+const root = new c_state();
+states.set(root.key(), root);
+let solution = null;
+
+document.writeln("<pre>")
+document.writeln('running with max_path_length ' + max_path_length);
+root.visit_children();
+if (solution === null) {
+	document.writeln('solution not found');
+} else {
+	solution.forEach(move => document.writeln(move));
+}
+document.writeln("</pre>")
+
+</script>

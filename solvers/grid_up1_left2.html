@@ -1,0 +1,114 @@
+<script>
+
+	// NOT FINISHED
+
+const cols = 2;
+const rows = 4;
+
+const done_c = 0;
+const done_r = 3;
+
+function done(s) {
+	if (s.b.c !== done_c) return false;
+	if (s.b.r !== done_r) return false;
+	if (done_r === 0) {
+		if (s.l.r !== 0) return true;
+		if (s.l.c === s.b.c) return false;
+		return true;
+	}
+	if (s.b.c === s.u.c && s.b.r === s.u.r) {
+		return false;
+	}
+}
+
+function c_state(o) {
+	this.bc = o.bc;
+	this.br = o.br;
+	this.uc = o.uc;
+	this.ur = o.ur;
+	this.lc = o.lc;
+	this.lr = o.lr;
+	if ('path' in o) {
+		this.path = o.path.slice();
+	} else {
+		this.path = [];
+	}
+}
+
+c_state.prototype.key = function() {
+	return '' + this.b.c + this.b.r + this.u.c + this.u.r + this.l.c + this.l.r;
+};
+
+c_state.prototype.visit_children = function() {
+	if (this.path.length + 1 > max_path_length) return;
+	const bc = this.bc;
+	const br = this.br;
+	const uc = this.uc;
+	const ur = this.ur;
+	const lc = this.lc;
+	const lr = this.lr;
+	if (!(bc === 0 || br === ur && bc === ur + 1 || br === lr && bc === lr + 1)) {
+		this.visit('left'); 
+	}
+	if (!(bc === cols - 1 || br === ur && bc === ur - 1)) {
+		this.visit('right'); 
+	}
+	if (!(br === 0 || bc === uc && br === ur + 1 || bc === lc && br === lr + 1)) {
+		this.visit('up'); 
+	}		 
+	if (!(br === rows -1 || bc === lc && br === lr - 1)) {
+		this.visit('down'); 
+	}		 
+};
+
+c_state.prototype.visit = function(move) {
+	const bc = this.bc;
+	const br = this.br;
+	const uc = this.uc;
+	const ur = this.ur;
+	const lc = this.lc;
+	const lr = this.lr;
+	const s = new c_state(this);
+	if (move === 'left') {
+		if (ur === br && uc === bc) --s.uc;
+		--s.bc;
+	}
+	if (move === 'right') {
+		if (ur === br && uc === bc) ++s.uc;
+		if (lr === br && lc === bc) ++s.lc;
+		++s.bc;
+	}
+	if (move === 'up') {
+		if (lr === br && lc === bc) {
+			if (ur === br && uc === bc) --s.ur;
+			--s.lr;
+		}
+		--s.br;
+	}
+	if (move === 'down') {
+		if (ur === br && uc === bc) ++s.ur;
+		if (lr === br && lc === bc) ++s.lr;
+		++s.br;
+	}
+	if (s.bc === goal_)
+};
+
+const max_path_length = 8;
+
+const states = new Map();
+const root = new c_state();
+
+states.set(root.key(), root);
+let solution = null;
+
+document.writeln("<pre>")
+document.writeln('running with max_path_length ' + max_path_length);
+root.visit_children();
+if (solution === null) {
+	document.writeln('solution not found');
+} else {
+	solution.forEach(move => document.writeln(move));
+}
+document.writeln("</pre>")
+
+</script>

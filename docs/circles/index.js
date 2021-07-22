@@ -27,8 +27,8 @@ const b = [
 	g.loop(g.frames(i_b6))
 ];
 
-const goto_red  = g.delay(1).starts(g.goto('red' )); 
-const goto_blue = g.delay(1).starts(g.goto('box' )); 
+const goto_red  = g.delay(1).starts(g.goto('red'  )); 
+const goto_blue = g.delay(1).starts(g.goto('grid1')); 
 
 const c = [
 	g.circle(350,  97, 70),
@@ -139,7 +139,7 @@ window.addEventListener('load', () => {
 	} else {
 		red_border.start();
 	}
-	if (g.visited('box')) {
+	if (g.visited('grid1')) {
 		blue.start();
 	} else {
 		blue_border.start();

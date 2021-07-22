@@ -1,0 +1,149 @@
+<script>
+//#region cell
+
+c_cell.prototype.key = function() {
+	return '' + String(this.c).padStart(2, '0') + String(this.r).padStart(2, '0');
+};
+
+c_cell.prototype.eq = function(cell) {
+	return this.c === cell.c && this.r === cell.r;
+};
+
+c_cell.prototype.left_of = function(cell) {
+	return this.c === cell.c - 1 && this.r === cell.r;
+};
+
+c_cell.prototype.right_of = function(cell) {
+	return this.c === cell.c + 1 && this.r === cell.r;
+};
+
+c_cell.prototype.below = function(cell) {
+	return this.c === cell.c && this.r === cell.r + 1;
+};
+
+c_cell.prototype.above = function(cell) {
+	return this.c === cell.c && this.r === cell.r - 1;
+};
+
+//#endregion
+
+
+
+const cols = 2;
+const rows = 4;
+const max_path_length = 8;
+
+const box_start   = new c_cell({ c: 0, r: 0 });
+const box_goal    = new c_cell({ c: 0, r: 2 });
+const up_start   = new c_cell({ c: 0, r: 4 });
+
+const states = new Map();
+let solution = null;
+
+//#region state
+
+function c_state(state) {
+	this.box = new c_cell(state.box);
+	this.up  = new c_cell(state.up );
+	if ('path' in state) {
+		this.path = state.path.slice();
+	} else {
+		this.path = [];
+	}
+}
+
+c_state.prototype.goal = function() {
+	return this.box.eq(box_goal) && !this.up.eq(box_goal); // need to allow passage up to win
+};
+
+c_state.prototype.key = function() {
+	return this.box.key() + this.up.key();
+};
+
+c_state.prototype.eq = function(state) {
+	return this.box.eq(state.box) && this.up.eq(state.up);
+};
+
+c_state.prototype.visit = function(move) {
+	let s = null;
+	if (move === 'left') {
+		if (this.box.c === 0 || this.up.left_of(this.box)) return;
+		s = new c_state(this);
+		if (s.up.eq(s.box)) {
+			--s.up.c;
+		}
+		--s.box.c;
+		s.path.push('left');
+	} else if (move === 'right') {
+		if (this.box.c === cols - 1 || this.up.right_of(this.box)) return;
+		s = new c_state(this);
+		if (s.up.eq(s.box)) {
+			++s.up.c;
+		}
+		++s.box.c;
+		s.path.push('right');
+	} else if (move === 'up') {
+		if (this.box.r === 0 || this.up.above(this.box)) return;
+		s = new c_state(this);
+		--s.box.r;
+		s.path.push('up');
+	} else { // move === 'down'
+		if (this.box.r === rows - 1) return;
+		s = new c_state(this);
+		if (s.up.eq(s.box)) {
+			++s.up.r;
+		}
+		++s.box.r;
+		s.path.push('down');
+	}
+	if (s.goal()) {
+		solution = s.path;
+	}
+	if (states.has(s.key())) {
+		if (states.get(s.key()).path.length > s.path.length) {
+			states.set(s.key(), s);
+		}
+	} else {
+		states.set(s.key(), s);
+	}
+	if (this.path.length + 1 > max_path_length) {
+		return;
+	}
+	if (solution !== null && solution.length <= this.path.length + 1) {
+		return;
+	}
+	console.log(s.path);
+	s.visit_children();
+}
+
+c_state.prototype.visit_children = function() {
+	this.visit('left');
+	this.visit('right');
+	this.visit('up');
+	this.visit('down');
+};
+
+//#endregion
+
+//#region start
+
+const root = new c_state({
+	box: box_start,
+	up : up_start
+});
+
+states.set(root.key(), root);
+
+document.writeln("<pre>")
+document.writeln('running with max_path_length ' + max_path_length);
+root.visit_children();
+if (solution === null) {
+	document.writeln('solution not found');
+} else {
+	solution.forEach(move => document.writeln(move));
+}
+document.writeln("</pre>")
+
+//#endregion
+
+</script>

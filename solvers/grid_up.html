@@ -2,11 +2,11 @@
 
 const cols = 2;
 const rows = 4;
-const max_path_length = 5;
+const max_path_length = 8;
 
-const box_start = new c_cell({ c: 0, r: 0 });
-const box_goal  = new c_cell({ c: 0, r: 2 });
-const up_start  = new c_cell({ c: 0, r: 1 });
+const box_start   = new c_cell({ c: 0, r: 0 });
+const box_goal    = new c_cell({ c: 0, r: 2 });
+const up_start   = new c_cell({ c: 0, r: 4 });
 
 const states = new Map();
 let solution = null;
@@ -116,7 +116,7 @@ c_state.prototype.visit = function(move) {
 	if (solution !== null && solution.length <= this.path.length + 1) {
 		return;
 	}
-	console.log(s.path);
+//	console.log(s.path);
 	s.visit_children();
 }
 
