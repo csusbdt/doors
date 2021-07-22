@@ -1,12 +1,15 @@
 <script>
 
-const cols      = 2;
-const rows      = 4;
-const max_depth = 12;
+const cols = 2;
+const rows = 4;
+const max_path_length = 5;
 
 const box_start = new c_cell({ c: 0, r: 0 });
 const box_goal  = new c_cell({ c: 0, r: 2 });
-const up_start  = new c_cell({ c: 1, r: 1 });
+const up_start  = new c_cell({ c: 0, r: 1 });
+
+const states = new Map();
+let solution = null;
 
 //#region cell
 
@@ -43,20 +46,18 @@ c_cell.prototype.above = function(cell) {
 
 //#region state
 
-const visited_map = new Map();
-
 function c_state(state) {
-	this.box         = new c_cell(state.box);
-	this.up          = new c_cell(state.up );
-	this.parent      = null;
-	this.left_child  = null;
-	this.right_child = null;
-	this.up_child    = null;
-	this.down_child  = null;
+	this.box = new c_cell(state.box);
+	this.up  = new c_cell(state.up );
+	if ('path' in state) {
+		this.path = state.path.slice();
+	} else {
+		this.path = [];
+	}
 }
 
 c_state.prototype.goal = function() {
-	return this.box.eq(box_goal) && !this.up.eq(box_goal);
+	return this.box.eq(box_goal) && !this.up.eq(box_goal); // need to allow passage up to win
 };
 
 c_state.prototype.key = function() {
@@ -67,101 +68,63 @@ c_state.prototype.eq = function(state) {
 	return this.box.eq(state.box) && this.up.eq(state.up);
 };
 
-let done = false;
-
-c_state.prototype.visit_children = function(depth) {
-	--depth;
-	if (depth === 0) {
+c_state.prototype.visit = function(move) {
+	let s = null;
+	if (move === 'left') {
+		if (this.box.c === 0 || this.up.left_of(this.box)) return;
+		s = new c_state(this);
+		if (s.up.eq(s.box)) {
+			--s.up.c;
+		}
+		--s.box.c;
+		s.path.push('left');
+	} else if (move === 'right') {
+		if (this.box.c === cols - 1 || this.up.right_of(this.box)) return;
+		s = new c_state(this);
+		if (s.up.eq(s.box)) {
+			++s.up.c;
+		}
+		++s.box.c;
+		s.path.push('right');
+	} else if (move === 'up') {
+		if (this.box.r === 0 || this.up.above(this.box)) return;
+		s = new c_state(this);
+		--s.box.r;
+		s.path.push('up');
+	} else { // move === 'down'
+		if (this.box.r === rows - 1) return;
+		s = new c_state(this);
+		if (s.up.eq(s.box)) {
+			++s.up.r;
+		}
+		++s.box.r;
+		s.path.push('down');
+	}
+	if (s.goal()) {
+		solution = s.path;
+	}
+	if (states.has(s.key())) {
+		if (states.get(s.key()).path.length > s.path.length) {
+			states.set(s.key(), s);
+		}
+	} else {
+		states.set(s.key(), s);
+	}
+	if (this.path.length + 1 > max_path_length) {
 		return;
 	}
-	// visit left
-	if (this.box.c > 0 && !this.box.right_of(this.up)) {
-		const s = new c_state(this);
-		if (this.box.eq(this.up)) --s.up.c;
-		--s.box.c;
-		if (!visited_map.has(s.key())) {
-			this.left_child = s;
-			s.parent = this;
-			visited_map.set(s.key(), s);
-			if (s.goal()) {
-				s.print_path();
-				done = true;
-				return;
-			}
-			s.visit_children(depth);
-			if (done) return;
-		}
+	if (solution !== null && solution.length <= this.path.length + 1) {
+		return;
 	}
-	// visit right
-	if (this.box.c < cols - 1 && !this.box.left_of(this.up)) {
-		const s = new c_state(this);
-		if (this.box.eq(this.up)) ++s.up.c;
-		++s.box.c;
-		if (!visited_map.has(s.key())) {
-			this.right_child = s;
-			s.parent = this;
-			visited_map.set(s.key(), s);
-			if (s.goal()) {
-				s.print_path();
-				done = true;
-				return false;
-			}
-			s.visit_children(depth);
-			if (done) return;
-		}
-	}
-	// visit up
-	if (this.box.r > 0 && !this.box.below(this.up)) {
-		const s = new c_state(this);
-		--s.box.r;
-		if (!visited_map.has(s.key())) {
-			this.up_child = s;
-			s.parent = this;
-			visited_map.set(s.key(), s);
-			if (s.goal()) {
-				s.print_path();
-				done = true;
-				return false;
-			}
-			s.visit_children(depth);
-			if (done) return;
-		}
-	}
-	// visit down
-	if (this.box.r < rows - 1) {
-		const s = new c_state(this);
-		if (this.box.eq(this.up)) ++s.up.r;
-		++s.box.r;
-		if (!visited_map.has(s.key())) {
-			this.down_child = s;
-			s.parent = this;
-			visited_map.set(s.key(), s);
-			if (s.goal()) {
-				s.print_path();
-				done = true;
-				return false;
-			}
-			s.visit_children(depth);
-			if (done) return;
-		}
-	}
-};
+	console.log(s.path);
+	s.visit_children();
+}
 
-c_state.prototype.print_path = function(path) {
-	if (typeof(path) === 'undefined') {
-		path = [];
-	}
-	if (this === root) {
-		document.writeln("<pre>")
-		path.reverse().forEach(e => document.writeln('  ' + e));
-		document.writeln("\n</pre>")
-	} else {
-		if      (this === this.parent.left_child ) path.push("left" );
-		else if (this === this.parent.right_child) path.push("right");
-		else if (this === this.parent.up_child   ) path.push("up"   );
-		else if (this === this.parent.down_child ) path.push("down" );
-		this.parent.print_path(path);
-	}
+c_state.prototype.visit_children = function() {
+	this.visit('left');
+	this.visit('right');
+	this.visit('up');
+	this.visit('down');
 };
 
 //#endregion
@@ -173,17 +136,17 @@ const root = new c_state({
 	up : up_start
 });
 
-visited_map.set(root.key(), root);
+states.set(root.key(), root);
 
 document.writeln("<pre>")
-document.writeln('running with max_depth ' + max_depth);
-root.visit_children(max_depth);
-if (!done) {
-	document.writeln("<pre>")	
-	document.write('solution not found');
-	document.writeln("\n</pre>")
+document.writeln('running with max_path_length ' + max_path_length);
+root.visit_children();
+if (solution === null) {
+	document.writeln('solution not found');
+} else {
+	solution.forEach(move => document.writeln(move));
 }
-document.writeln("\n</pre>")
+document.writeln("</pre>")
 
 //#endregion
 
