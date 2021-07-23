@@ -1,8 +1,10 @@
-import { 
-	get_state as state_get_state,
-	visited as state_visited,
-	goto as state_goto
-} from './state.js';
+import { get_state, save_state } from './state.js';
+//	get_state as state_get_state,
+//	save_state as state_save_state,
+//	,
+//	visited as state_visited,
+//	goto as state_goto
+//} from './state.js';
 
 //#region utility functions
 
@@ -31,12 +33,17 @@ function start_start_sets(...start_sets) {
 }
 
 function goto(page) {
-	return () => state_goto(page);
+	return () => {
+		const s = get_state();
+		s.page = page;
+		save_state();
+		location.replace('../' + page);
+	};
 }
 
-function get_state() {
-	return state_get_state();
-}
+// function get_state() {
+// 	return state_get_state();
+// }
 
 //#endregion
 
@@ -547,9 +554,10 @@ requestAnimationFrame(animation_loop);
 export default {
 	log: log,
 	set_design_size: set_design_size,
-	visited: state_visited,
+//	visited: state_visited,
 	goto: goto,
 	get_state: get_state,
+	save_state: save_state,
 	stop_stop_sets: stop_stop_sets,
 	start_start_sets: start_start_sets,
 	circle: circle,

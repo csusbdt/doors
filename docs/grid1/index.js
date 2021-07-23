@@ -3,21 +3,24 @@ import g from '../canvasapp.js';
 g.set_design_size(668, 1080);
 
 const b_frames = g.frames(i_b);
-const o_frames = g.frames(i_o1);
-const p_frames = g.frames(i_o2);
+const o_frames = g.frames(i_o);
+const p_frames = g.frames(i_p);
 
-const b00 = g.loop(g.frames(i_b), 10, -200,   0);
-const b01 = g.loop(g.frames(i_b), 10, -200, 200);
-const b02 = g.loop(g.frames(i_b), 10, -200, 400);
-const b10 = g.loop(g.frames(i_b), 10,    0,   0);
-const b11 = g.loop(g.frames(i_b), 10,    0, 200);
-const b12 = g.loop(g.frames(i_b), 10,    0, 400);
+const b00 = g.loop(b_frames, 10, -200,   0);
+const b01 = g.loop(b_frames, 10, -200, 200);
+const b02 = g.loop(b_frames, 10, -200, 400);
+const b10 = g.loop(b_frames, 10,    0,   0);
+const b11 = g.loop(b_frames, 10,    0, 200);
+const b12 = g.loop(b_frames, 10,    0, 400);
 
-const o10 = g.loop(g.frames(i_o1), 10, 0,    0);
-const o11 = g.loop(g.frames(i_o1), 10, 0,  200);
+const o10 = g.loop(o_frames, 10, 0,    0);
+const o11 = g.loop(o_frames, 10, 0,  200);
 
-const p11 = g.loop(g.frames(i_o2), 10, 0, -200);
-const p12 = g.loop(g.frames(i_o2), 10, 0,    0);
+const p11 = g.loop(p_frames, 10, 0, -200);
+const p12 = g.loop(p_frames, 10, 0,    0);
+
+const arrow1 = g.loop(g.frames(i_arrow1));
+const arrow2 = g.loop(g.frames(i_arrow2));
 
 const t00 = g.touch(g.rect(104, 184, 320, 384));
 const t01 = g.touch(g.rect(104, 394, 320, 604));
@@ -38,6 +41,9 @@ t10.starts(() => {
 			b10.start();
 			g.delay(.6).starts(() => b10.stop()).start();
 			g.delay(1.2).starts(g.goto('doors')).start();
+			const s = g.get_state('grid1');
+			s.arrow1 = true;
+			g.save_state();
 			return;
 		}
 	} else {
@@ -80,6 +86,9 @@ t12.starts(() => {
 			b12.start();
 			g.delay(.6).starts(() => b12.stop()).start();
 			g.delay(1.2).starts(g.goto('doors')).start();
+			const s = g.get_state('grid1');
+			s.arrow2 = true;
+			g.save_state();
 			return;
 		}
 	} else {
@@ -94,9 +103,20 @@ t12.starts(() => {
 	}
 });
 
+const arrow1_touch = g.touch(g.circle(600, 280, 50)).make_independent().starts(g.goto('doors'));
+const arrow2_touch = g.touch(g.circle(600, 700, 50)).make_independent().starts(g.goto('doors'));
+
 window.addEventListener('load', () => {
 	b11.start();
 	o10.start();
 	p12.start();
 	t01.start();
+	if (g.get_state('grid1').arrow1) {
+		arrow1.start();
+		arrow1_touch.start();
+	}
+	if (g.get_state('grid1').arrow2) {
+		arrow2.start();
+		arrow2_touch.start();
+	}
 });
