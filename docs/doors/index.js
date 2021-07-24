@@ -3,25 +3,21 @@ import g from '../canvasapp.js';
 g.set_design_size(668, 1080);
 
 const adj_x = 210;
-const circle_filled    = g.loop(g.frames(i_circle_filled), 10, adj_x);
-const square_filled    = g.loop(g.frames(i_square_filled), 10, adj_x);
-const triangle_filled  = g.loop(g.frames(i_triangle_filled), 10, adj_x);
-const circle_border    = g.loop(g.frames(i_circle_border), 10, adj_x);
-const square_border    = g.loop(g.frames(i_square_border), 10, adj_x);
-const triangle_border  = g.loop(g.frames(i_triangle_border), 10, adj_x);
+const circle_filled   = g.loop(g.frames(i_circle_filled  ), 10, adj_x);
+const square_filled   = g.loop(g.frames(i_square_filled  ), 10, adj_x);
+const triangle_filled = g.loop(g.frames(i_triangle_filled), 10, adj_x);
+const circle_border   = g.loop(g.frames(i_circle_border  ), 10, adj_x);
+const square_border   = g.loop(g.frames(i_square_border  ), 10, adj_x);
+const triangle_border = g.loop(g.frames(i_triangle_border), 10, adj_x);
 
-const door_frames    = g.loop(g.frames(i_door_frames));
+const door_frames     = g.loop(g.frames(i_door_frames));
 
-const circle11       = g.loop(g.frames(i_circle  ), 10,   0,   0);
-const square12       = g.loop(g.frames(i_square  ), 10, 337,   8);
-const square21       = g.loop(g.frames(i_square  ), 10,  36, 349);
-const triangle22     = g.loop(g.frames(i_triangle), 10, 339, 357);
-const triangle31     = g.loop(g.frames(i_triangle), 10,  53, 698);
-const circle32       = g.loop(g.frames(i_circle  ), 10, 347, 696);
-
-const goto_circles   = g.delay(.3).starts(g.goto('circles'  ));
-const goto_squares   = g.delay(.3).starts(g.goto('car'      ));
-const goto_triangles = g.delay(.3).starts(g.goto('triangles'));
+const circle11        = g.loop(g.frames(i_circle  ), 10,   0,   0);
+const square12        = g.loop(g.frames(i_square  ), 10, 337,   8);
+const square21        = g.loop(g.frames(i_square  ), 10,  36, 349);
+const triangle22      = g.loop(g.frames(i_triangle), 10, 339, 357);
+const triangle31      = g.loop(g.frames(i_triangle), 10,  53, 698);
+const circle32        = g.loop(g.frames(i_circle  ), 10, 347, 696);
 
 const door11_closed  = g.loop(g.frames(i_door11_0));
 const door12_closed  = g.loop(g.frames(i_door12_0));
@@ -164,8 +160,11 @@ const show_triangle = () => {
 	if (circles === 1 || squares === 1) {
 		reset();
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
+		const s = g.get_state('doors');
+		s.triangle = true;
+		g.save_state();
 		triangle_filled.start();
-		goto_triangles.start();
+		g.delay(.6).starts(g.goto('grid1')).start();
 	} else {
 		touches();
 	}
@@ -214,39 +213,31 @@ const view = () => {
 	door22_closed.start();
 	door31_closed.start();
 	door32_closed.start();
-
-	if (g.visited('circles')) {
-		circle_filled.start();
-	} else {
-		circle_border.start();
-	}
-	if (g.visited('car')) {
-		square_filled.start();
-	} else {
-		square_border.start();
-	}
-	if (g.visited('triangles')) {
-		triangle_filled.start();
-	} else {
-		triangle_border.start();
-	}
-
 	touches();
 };
 
 reset_closing.starts(view);
 
 window.addEventListener('load', e => {
-	const state = g.get_state();
-	let num_visited = 0;
-	for (let i = 0; i < state.visited.length; ++i) {
-		if (state.visited[i]) ++num_visited;
-	}
-	if (num_visited === 1) {
-		reset_opened.start();
-		reset_close.start();	
+	//debugger;
+	const s = g.get_state('doors');
+	if (s.circle) {
+		circle_filled.start();
+		g.touch(g.circle(50, 40, 25), adj_x).starts(g.goto('grid1')).make_independent().start();
 	} else {
-		view();
+		circle_border.start();
 	}
-
+	if (s.square) {
+		square_filled.start();
+		g.touch(g.circle(100, 40, 25), adj_x).starts(g.goto('grid1')).make_independent().start();
+	} else {
+		square_border.start();
+	}
+	if (s.triangle) {
+		triangle_filled.start();
+		g.touch(g.circle(150, 40, 25), adj_x).starts(g.goto('grid1')).make_independent().start();
+	} else {
+		triangle_border.start();
+	}
+	view();
 });
