@@ -223,19 +223,19 @@ window.addEventListener('load', e => {
 	const s = g.get_state('doors');
 	if (s.circle) {
 		circle_filled.start();
-		g.touch(g.circle(50, 40, 25), adj_x).starts(g.goto('grid1')).make_independent().start();
+//		g.touch(g.circle(50, 40, 25), adj_x).starts(g.goto('grid1')).make_independent().start();
 	} else {
 		circle_border.start();
 	}
 	if (s.square) {
 		square_filled.start();
-		g.touch(g.circle(100, 40, 25), adj_x).starts(g.goto('grid1')).make_independent().start();
+//		g.touch(g.circle(100, 40, 25), adj_x).starts(g.goto('grid1')).make_independent().start();
 	} else {
 		square_border.start();
 	}
 	if (s.triangle) {
 		triangle_filled.start();
-		g.touch(g.circle(150, 40, 25), adj_x).starts(g.goto('grid1')).make_independent().start();
+//		g.touch(g.circle(150, 40, 25), adj_x).starts(g.goto('grid1')).make_independent().start();
 	} else {
 		triangle_border.start();
 	}

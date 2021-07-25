@@ -1,8 +1,8 @@
 const initial_state = {
 	page: 'grid1',
-	version: '6',
-	grid1: { arrow1: false, arrow2: false },
-	doors: { circle: false, square: false, triangle: false }
+	version: '7',
+	grid1: { back: 'doors', arrow1: false, arrow2: false },
+	doors: { back: 'grid1', circle: false, square: false, triangle: false }
 };
 
 let state = null;

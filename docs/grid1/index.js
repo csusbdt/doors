@@ -103,8 +103,8 @@ t12.starts(() => {
 	}
 });
 
-const arrow1_touch = g.touch(g.circle(600, 280, 50)).make_independent().starts(g.goto('doors'));
-const arrow2_touch = g.touch(g.circle(600, 700, 50)).make_independent().starts(g.goto('doors'));
+//const arrow1_touch = g.touch(g.circle(600, 280, 50)).make_independent().starts(g.goto('doors'));
+//const arrow2_touch = g.touch(g.circle(600, 700, 50)).make_independent().starts(g.goto('doors'));
 
 window.addEventListener('load', () => {
 	b11.start();
@@ -113,10 +113,10 @@ window.addEventListener('load', () => {
 	t01.start();
 	if (g.get_state('grid1').arrow1) {
 		arrow1.start();
-		arrow1_touch.start();
+//		arrow1_touch.start();
 	}
 	if (g.get_state('grid1').arrow2) {
 		arrow2.start();
-		arrow2_touch.start();
+//		arrow2_touch.start();
 	}
 });
