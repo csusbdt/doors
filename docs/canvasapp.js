@@ -533,13 +533,9 @@ requestAnimationFrame(animation_loop);
 //#region globals
 
 function goto(next_page) {
-	return delay(.001).starts(	
+	return delay(.001).starts(
 		() => {
 			const s = get_state();
-			if (!(next_page in s)) {
-				s[next_page] = {};
-			}
-			s[next_page].back = get_page();
 			s.page = next_page;
 			save_state();
 			location.replace('../' + next_page);
@@ -551,25 +547,25 @@ function goto(next_page) {
 // state is undefined here
 
 //debugger;
-let back_page = get_page_state('back');
-if (back_page === false) {
-	back_page = get_page();
-}
-const back_0 = new Image();
-const back_1 = new Image();
-const back_2 = new Image();
-const back_3 = new Image();
-back_0.src = '../images/back_0.png';
-back_1.src = '../images/back_1.png';
-back_2.src = '../images/back_2.png';
-back_3.src = '../images/back_3.png';
-const back = loop(frames(back_0), 1000);
-const back_once = once(frames([back_1, back_2, back_3]), 1000);
-const back_touch = touch(rect(568, 980, 668, 1080)).make_independent();
-back_touch.stops(back).starts(back_once);
-back_once.starts(goto(back_page));
-back.start();
-back_touch.start();
+// let back_page = get_page_state('back');
+// if (back_page === false) {
+// 	back_page = get_page();
+// }
+// const back_0 = new Image();
+// const back_1 = new Image();
+// const back_2 = new Image();
+// const back_3 = new Image();
+// back_0.src = '../images/back_0.png';
+// back_1.src = '../images/back_1.png';
+// back_2.src = '../images/back_2.png';
+// back_3.src = '../images/back_3.png';
+// const back = loop(frames(back_0), 1000);
+// const back_once = once(frames([back_1, back_2, back_3]), 1000);
+// const back_touch = touch(rect(568, 980, 668, 1080)).make_independent();
+// back_touch.stops(back).starts(back_once);
+// back_once.starts(goto(back_page));
+// back.start();
+// back_touch.start();
 
 //#endregion
 
@@ -578,7 +574,6 @@ back_touch.start();
 export default {
 	log: log,
 	set_design_size: set_design_size,
-	back: back,
 	goto: goto,
 	get_state: get_state,
 	save_state: save_state,

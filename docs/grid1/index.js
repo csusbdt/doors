@@ -41,10 +41,8 @@ t10.starts(() => {
 			b10.start();
 			g.delay(.6).starts(() => b10.stop()).start();
 			g.delay(1.2).starts(g.goto('doors')).start();
-			const s = g.get_state('grid1');
-			s.arrow1 = true;
+			g.set_page_state('arrow1');
 			arrow1.start();
-			g.save_state();
 			return;
 		}
 	} else {
@@ -86,10 +84,8 @@ t12.starts(() => {
 		if (p11.started()) {
 			b12.start();
 			g.delay(.6).starts(() => b12.stop()).start();
-			g.delay(1.2).starts(g.goto('doors')).start();
-			const s = g.get_state('grid1');
-			s.arrow2 = true;
-			g.save_state();
+			g.delay(1.2).starts(g.goto('s1')).start();
+			g.set_page_state('arrow2');
 			arrow2.start();
 			return;
 		}
@@ -113,10 +109,10 @@ window.addEventListener('load', () => {
 	o10.start();
 	p12.start();
 	t01.start();
-	if (g.get_state('grid1').arrow1) {
+	if (g.get_page_state('arrow1')) {
 		arrow1.start();
 	}
-	if (g.get_state('grid1').arrow2) {
+	if (g.get_page_state('arrow2')) {
 		arrow2.start();
 	}
 });

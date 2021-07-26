@@ -9,7 +9,7 @@ const stub_close   = g.touch(g.circle(330, 480, 250));
 
 stub_close.stops(stub_opened).starts(stub_closing);
 
-stub_closing.starts(g.goto('doors'));
+stub_closing.starts(g.goto('grid1'));
 
 window.addEventListener('load', () => {
 	stub_opened.start();

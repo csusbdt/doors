@@ -138,7 +138,6 @@ const show_circle = () => {
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
 		circle_filled.start();
 		g.set_page_state('circles');
-		triangle_filled.start();
 		g.delay(.6).starts(g.goto('circles')).start();
 	} else {
 		touches();
@@ -165,7 +164,7 @@ const show_triangle = () => {
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
 		g.set_page_state('triangles');
 		triangle_filled.start();
-		g.delay(.6).starts(g.goto('grid1')).start();
+		g.delay(.6).starts(g.goto('s2')).start();
 	} else {
 		touches();
 	}
@@ -220,23 +219,19 @@ const view = () => {
 reset_closing.starts(view);
 
 window.addEventListener('load', e => {
-	//debugger;
 	const s = g.get_state('doors');
 	if (g.get_page_state('circles')) {
 		circle_filled.start();
-//		g.touch(g.circle(50, 40, 25), adj_x).starts(g.goto('grid1')).make_independent().start();
 	} else {
 		circle_border.start();
 	}
 	if (g.get_page_state('squares')) {
 		square_filled.start();
-//		g.touch(g.circle(100, 40, 25), adj_x).starts(g.goto('grid1')).make_independent().start();
 	} else {
 		square_border.start();
 	}
 	if (g.get_page_state('triangles')) {
 		triangle_filled.start();
-//		g.touch(g.circle(150, 40, 25), adj_x).starts(g.goto('grid1')).make_independent().start();
 	} else {
 		triangle_border.start();
 	}

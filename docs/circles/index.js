@@ -27,9 +27,6 @@ const b = [
 	g.loop(g.frames(i_b6))
 ];
 
-const goto_red  = g.delay(1).starts(g.goto('red'  )); 
-const goto_blue = g.delay(1).starts(g.goto('grid1')); 
-
 const c = [
 	g.circle(350,  97, 70),
 	g.circle(350, 261, 70),
@@ -88,7 +85,7 @@ t[3].starts(() => {
 			u.stop();
 			g.set_page_state('red');
 			red.start();
-			goto_red.start();	
+			g.delay(1).starts(g.goto('house')).start();	
 		}
 	} else if (s[3] === 1 && s[4] === 2 && s[5] === 0) move(3, 5);
 	else if (s[3] === 2 && s[2] === 0              ) {
@@ -98,7 +95,7 @@ t[3].starts(() => {
 			u.stop();
 			g.set_page_state('blue');
 			blue.start();
-			goto_blue.start();
+			g.delay(1).starts(g.goto('doors')).start();
 		}
 	} else if (s[3] === 2 && s[2] === 1 && s[1] === 0) move(3, 1);
 });

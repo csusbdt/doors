@@ -1,5 +1,5 @@
 const initial_state = {
-	page: 'grid1',
+	page: 'doors',
 	version: '7'
 	//grid1: { back: 'doors', arrow1: false, arrow2: false },
 	//doors: { back: 'grid1', circle: false, square: false, triangle: false },
@@ -25,14 +25,8 @@ if (state_string === null) {
 	} else {
 		if (state.version !== initial_state.version) {
 			state = initial_state;
-//			location.replace('../' + state.page);
 		}	
 	}
-
-	// if (!('version' in state) || state.version !== initial_state.version) {
-	// 	state = initial_state;
-	// 	location.replace('../' + state.page);
-	// }
 }
 
 // check current page
@@ -47,13 +41,8 @@ if (tokens[tokens.length - 1].length === 0) {
 
 if (page !== state.page) {
 	save_state();
-//	debugger;
 	location.replace('../' + state.page);
 }
-
-// if (!(state.page in state)) {
-// 	state[state.page] = {};
-// }
 
 export const get_state = (page, key) => {
 	if (page === undefined) {
