@@ -1,9 +1,6 @@
 const initial_state = {
-	page: 'doors',
+	page: 'box',
 	version: '7'
-	//grid1: { back: 'doors', arrow1: false, arrow2: false },
-	//doors: { back: 'grid1', circle: false, square: false, triangle: false },
-	//circles: { }
 };
 
 let state = null;
