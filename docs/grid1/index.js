@@ -43,6 +43,7 @@ t10.starts(() => {
 			g.delay(1.2).starts(g.goto('doors')).start();
 			const s = g.get_state('grid1');
 			s.arrow1 = true;
+			arrow1.start();
 			g.save_state();
 			return;
 		}
@@ -89,6 +90,7 @@ t12.starts(() => {
 			const s = g.get_state('grid1');
 			s.arrow2 = true;
 			g.save_state();
+			arrow2.start();
 			return;
 		}
 	} else {
@@ -113,10 +115,8 @@ window.addEventListener('load', () => {
 	t01.start();
 	if (g.get_state('grid1').arrow1) {
 		arrow1.start();
-//		arrow1_touch.start();
 	}
 	if (g.get_state('grid1').arrow2) {
 		arrow2.start();
-//		arrow2_touch.start();
 	}
 });

@@ -1,10 +1,4 @@
-import { get_state, save_state } from './state.js';
-//	get_state as state_get_state,
-//	save_state as state_save_state,
-//	,
-//	visited as state_visited,
-//	goto as state_goto
-//} from './state.js';
+import { get_state, save_state, get_page, set_state, get_page_state, set_page_state } from './state.js';
 
 //#region utility functions
 
@@ -538,14 +532,17 @@ requestAnimationFrame(animation_loop);
 
 //#region globals
 
-function goto(page) {
+function goto(next_page) {
 	return delay(.001).starts(	
 		() => {
 			const s = get_state();
-			s[page]['back'] = s.page;
-			s.page = page;
+			if (!(next_page in s)) {
+				s[next_page] = {};
+			}
+			s[next_page].back = get_page();
+			s.page = next_page;
 			save_state();
-			location.replace('../' + page);
+			location.replace('../' + next_page);
 		}		
 	);
 }
@@ -553,8 +550,11 @@ function goto(page) {
 // do this after state is loaded or something else
 // state is undefined here
 
-const state = get_state();
-const back_page = state[state.page].back;
+//debugger;
+let back_page = get_page_state('back');
+if (back_page === false) {
+	back_page = get_page();
+}
 const back_0 = new Image();
 const back_1 = new Image();
 const back_2 = new Image();
@@ -582,6 +582,9 @@ export default {
 	goto: goto,
 	get_state: get_state,
 	save_state: save_state,
+	get_page: get_page,
+	get_page_state: get_page_state,
+	set_page_state: set_page_state,
 	stop_stop_sets: stop_stop_sets,
 	start_start_sets: start_start_sets,
 	circle: circle,

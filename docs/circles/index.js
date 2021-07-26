@@ -86,6 +86,7 @@ t[3].starts(() => {
 		if (s[5] === 1 && s[6] === 1) {
 			t.forEach(o => o.stop());
 			u.stop();
+			g.set_page_state('red');
 			red.start();
 			goto_red.start();	
 		}
@@ -95,6 +96,7 @@ t[3].starts(() => {
 		if (s[1] === 2 && s[0] === 2) {
 			t.forEach(o => o.stop());
 			u.stop();
+			g.set_page_state('blue');
 			blue.start();
 			goto_blue.start();
 		}
@@ -134,12 +136,12 @@ const reset = () => {
 u.starts(reset);
 
 window.addEventListener('load', () => {
-	if (g.visited('red')) {
+	if (g.get_page_state('red')) {
 		red.start();
 	} else {
 		red_border.start();
 	}
-	if (g.visited('grid1')) {
+	if (g.get_page_state('blue')) {
 		blue.start();
 	} else {
 		blue_border.start();
