@@ -2,9 +2,9 @@ import g from '../canvasapp.js';
 
 g.set_design_size(668, 1080);
 
-const b_frames = g.frames(i_b);
-const o_frames = g.frames(i_o);
-const p_frames = g.frames(i_p);
+const b_frames = g.frames(i_b, 8, 200, 0);
+const o_frames = g.frames(i_l2, 8, 200, 0);
+const p_frames = g.frames(i_l2, 8, 200, 400);
 
 const b00 = g.loop(b_frames, 10, -200,   0);
 const b01 = g.loop(b_frames, 10, -200, 200);
@@ -19,8 +19,8 @@ const o11 = g.loop(o_frames, 10, 0,  200);
 const p11 = g.loop(p_frames, 10, 0, -200);
 const p12 = g.loop(p_frames, 10, 0,    0);
 
-const arrow1 = g.loop(g.frames(i_arrow1));
-const arrow2 = g.loop(g.frames(i_arrow2));
+const arrow1 = g.loop(g.frames(i_exit, 8, 520, 0));
+const arrow2 = g.loop(g.frames(i_exit, 8, 520, 400));
 
 const t00 = g.touch(g.rect(104, 184, 320, 384));
 const t01 = g.touch(g.rect(104, 394, 320, 604));
@@ -100,9 +100,6 @@ t12.starts(() => {
 		t11.start();
 	}
 });
-
-//const arrow1_touch = g.touch(g.circle(600, 280, 50)).make_independent().starts(g.goto('doors'));
-//const arrow2_touch = g.touch(g.circle(600, 700, 50)).make_independent().starts(g.goto('doors'));
 
 window.addEventListener('load', () => {
 	b11.start();
