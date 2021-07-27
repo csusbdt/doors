@@ -1,0 +1,49 @@
+<script>
+	const max_path_length = 8;
+
+	// 3 x 5
+	
+	const gc = 0;
+	const gr = 0;
+
+	let bc = 2;
+	let br = 4;
+	
+	const can_move_up = () => {
+		
+	}
+
+	function c_state() {
+		this.path = [];
+	}
+	
+	c_state.prototype.key = function() {
+		throw new Error("implement me");
+	};
+	
+	c_state.prototype.visit_children = function() {
+		if (this.path.length + 1 > max_path_length) return;
+		throw new Error("implement me");
+	};
+	
+	c_state.prototype.visit = function(move) {
+	
+	};
+	
+	const states = new Map();
+	const root = new c_state();
+	states.set(root.key(), root);
+	let solution = null;
+	
+	document.writeln("<pre>")
+	document.writeln('running with max_path_length ' + max_path_length);
+	root.visit_children();
+	if (solution === null) {
+		document.writeln('solution not found');
+	} else {
+		solution.forEach(move => document.writeln(move));
+	}
+	document.writeln("</pre>")
+	
+	</script>
+	

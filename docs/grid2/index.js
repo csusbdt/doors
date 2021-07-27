@@ -26,9 +26,8 @@ let lr = 3;
 
 const can_move_down = () => {
 	if (br === 3) return false;
-	if (bc !== lc) return true;
-	if (br === lr - 1) return false;
-	if (br === lr && ur === lr - 1) return false;
+	if (bc === lc && br === lr - 1) return false;
+	if (bc === lc && br === lr && bc === uc && br === ur - 1) return false;
 	return true;
 };
 
@@ -117,29 +116,29 @@ const move_right = () => {
 	view();
 };
 
-const down = (c, r) => {
-	return bc === c && br === r - 1;
-}
+// const down = (c, r) => {
+// 	return bc === c && br === r - 1;
+// }
 
-const up = (c, r) => {
-	return bc === c && br === r + 1;
-}
+// const up = (c, r) => {
+// 	return bc === c && br === r + 1;
+// }
 
-const left = (c, r) => {
-	return bc === c + 1 && br === r;
-}
+// const left = (c, r) => {
+// 	return bc === c + 1 && br === r;
+// }
 
-const right = (c, r) => {
-	return bc === c - 1 && br === r;
-}
+// const right = (c, r) => {
+// 	return bc === c - 1 && br === r;
+// }
 
 for (let c = 0; c < t.length; ++c) {
 	for (let r = 0; r < t[0].length; ++r) {
 		t[c][r].starts(() => {
-			if (down(c, r)) move_down();
-			else if (up(c, r)) move_up();
-			else if (left(c, r)) move_left();
-			else if (right(c, r)) move_right();
+			if (bc === c && br === r - 1) move_down();
+			else if (bc === c && br === r + 1) move_up();
+			else if (bc === c + 1 && br === r) move_left();
+			else if (bc === c - 1 && br === r) move_right();
 			else {
 				throw new Error('logic error');
 			}
