@@ -84,7 +84,7 @@ t12.starts(() => {
 		if (p11.started()) {
 			b12.start();
 			g.delay(.6).starts(() => b12.stop()).start();
-			g.delay(1.2).starts(g.goto('s1')).start();
+			g.delay(1.2).starts(g.goto('grid2')).start();
 			g.set_page_state('arrow2');
 			arrow2.start();
 			return;

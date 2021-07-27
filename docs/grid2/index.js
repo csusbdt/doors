@@ -2,9 +2,11 @@ import g from '../canvasapp.js';
 
 g.set_design_size(668, 1080);
 
-const b_loop = g.loop(g.frames(i_box));
-const u_loop = g.loop(g.frames(i_u1));
-const l_loop = g.loop(g.frames(i_l2));
+const b_loop      = g.loop(g.frames(i_box   ));
+const u_loop      = g.loop(g.frames(i_u1    ));
+const l_loop      = g.loop(g.frames(i_l2    ));
+const exit02_loop = g.loop(g.frames(i_exit02));
+const exit03_loop = g.loop(g.frames(i_exit03));
 
 const t = [ new Array(4), new Array(4) ];
 for (let c = 0; c < t.length; ++c) {
@@ -66,9 +68,11 @@ const view = () => {
 	l_loop.set_dy(lr * 200);
 
 	if (exit_1()) {
-		g.delay(.5).starts(() => {
-			b_loop.set_dx(-190);
-		}).start();
+		g.set_page_state('exit02');
+		g.delay(.5).stops(exit02_loop).starts(
+			g.delay(.5).starts(g.goto('grid1')),
+			() => b_loop.set_dx(-190)
+		).start();
 		return;
 	}
 	if (exit_2()) {
@@ -145,5 +149,7 @@ window.addEventListener('load', () => {
 	b_loop.start();
 	u_loop.start();
 	l_loop.start();
+	if (g.get_page_state('exit02')) exit02_loop.start();
+	if (g.get_page_state('exit03')) exit03_loop.start();
 	view();
 });

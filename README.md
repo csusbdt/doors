@@ -6,5 +6,5 @@ doors -> circles, grid1, s2
   s2 -> doors
   circles -> doors, house
     house -> circles
-  grid1 -> doors, s1
-    s1 -> grid1
+  grid1 -> doors, grid2
+    grid2 -> grid1, s1
