@@ -15,12 +15,12 @@ for (let c = 0; c < t.length; ++c) {
 	}
 }
 
-bc = 0;
-br = 0;
-uc = 2;
-ur = 0;
-lc = 1;
-lr = 3;
+let bc = 0;
+let br = 0;
+let uc = 0;
+let ur = 2;
+let lc = 1;
+let lr = 3;
 
 const can_move_down = () => {
 	if (br === 3) return false;
@@ -32,14 +32,14 @@ const can_move_down = () => {
 
 const can_move_up = () => {
 	if (br === 0) return false;
-	if (br === ur + 1) return false;
-	if (br === lr + 1) return false;
+	if (bc === uc && br === ur + 1) return false;
+	if (bc === lc && br === lr + 1) return false;
 	return true;
 };
 
 const can_move_left = () => {
 	if (bc === 0) return false;
-	if(br === ur + 1) return false;
+	if (br === ur && bc === uc + 1) return false;
 	return true;
 };
 
@@ -47,12 +47,6 @@ const can_move_right = () => {
 	if (bc === 1) return false;
 	if (br === ur && bc === uc - 1) return false;
 	return true;
-};
-
-const move_down = () => {
-	if (br === lr) ++lr;
-	if (br === ur) ++ur;
-	++br;
 };
 
 const exit_1 = () => {
@@ -83,27 +77,36 @@ const view = () => {
 		}).start();
 		return;
 	}
-	if (can_move_down() ) t(bc, br + 1).start();
-	if (can_move_up()   ) t(bc, br - 1).start();
-	if (can_move_left() ) t(bc - 1, br).start();
-	if (can_move_right()) t(bc + 1, br).start();
+	if (can_move_down() ) t[bc][br + 1].start();
+	if (can_move_up()   ) t[bc][br - 1].start();
+	if (can_move_left() ) t[bc - 1][br].start();
+	if (can_move_right()) t[bc + 1][br].start();
+};
+
+const move_down = () => {
+	if (bc === lc && br === lr) ++lr;
+	if (bc === uc && br === ur) ++ur;
+	++br;
+	view();
 };
 
 const move_up = () => {
-	if (br === lr) --lr;
-	if (br === ur && br === lr) --ur;
+	if (bc === lc && br === lr) {
+		if (bc === uc && br === ur) --ur;
+		--lr;
+	}
 	--br;
 	view();
 };
 
 const move_left = () => {
-	if (bc === uc) --uc;
+	if (bc === uc && br === ur) --uc;
 	--bc;
 	view();
 };
 
 const move_right = () => {
-	if (bc === uc) ++uc;
+	if (bc === uc && br === ur) ++uc;
 	++bc;
 	view();
 };
@@ -139,5 +142,8 @@ for (let c = 0; c < t.length; ++c) {
 }
 
 window.addEventListener('load', () => {
+	b_loop.start();
+	u_loop.start();
+	l_loop.start();
 	view();
 });
