@@ -76,9 +76,11 @@ const view = () => {
 		return;
 	}
 	if (exit_2()) {
-		g.delay(.5).starts(() => {
-			b_loop.set_dx(-190);
-		}).start();
+		g.set_page_state('exit03');
+		g.delay(.5).stops(exit03_loop).starts(
+			g.delay(.5).starts(g.goto('s1')),
+			() => b_loop.set_dx(-190)
+		).start();
 		return;
 	}
 	if (can_move_down() ) t[bc][br + 1].start();
