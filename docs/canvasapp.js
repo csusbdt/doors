@@ -158,6 +158,18 @@ function c_once(frames, z_index = 100, dx = 0, dy = 0) {
 	this.stop_set  = [];
 }
 
+c_once.prototype.set_dx = function(dx) {
+	this.dx = dx;
+	dirty = true;
+	return this;
+}
+
+c_once.prototype.set_dy = function(dy) {
+	this.dy = dy;
+	dirty = true;
+	return this;
+}
+
 c_once.prototype.starts = function(...os) {
 	os.forEach(o => {
 		this.start_set.push(o);
