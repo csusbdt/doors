@@ -1,5 +1,5 @@
 const initial_state = {
-	page: 'doors',
+	page: 'gridx',
 	version: '8'
 };
 
