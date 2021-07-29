@@ -1,47 +1,186 @@
 <script>
-	const max_path_length = 8;
+	const max_path_length = 11;
+	const goal_c = 2;
+	const goal_r = 4;
+	let goal_state = null;
 
 	// 3 x 5
-	
-	const gc = 2;
-	const gr = 4;
 
-	let bc = 0;
-	let br = 0;
-	
-	const can_move_up = () => {
-		
+	function c_state(s) {
+		this.c = s.c;
+		this.r = s.r;
+		this.l11c = s.l11c;
+		this.l11r = s.l11r;
+		this.path = s.path.slice();
 	}
 
-	function c_state() {
-		this.path = [];
+	c_state.prototype.at_goal = function() {
+		if (this.l11c === goal_c && this.l11r === goal_r) {
+			return false;
+		}
+		return this.c === goal_c && this.r === goal_r;
+	};
+	
+	c_state.prototype.can_move_up = function() {
+		const r = this.r;
+		const c = this.c;
+		const l11c = this.l11c;
+		const l11r = this.l11r;
+		if (r === 0) return false;
+		if (l11c === c && l11r === r - 1) return false;
+		return true;
 	}
+	
+	c_state.prototype.can_move_down = function() {
+		const r = this.r;
+		const c = this.c;
+		const l11c = this.l11c;
+		const l11r = this.l11r;
+		if (r === 4) return false;
+		if (l11c === c && l11r === r + 1) return false;
+		return true;
+	}
+	
+	c_state.prototype.can_move_left = function() {
+		const r = this.r;
+		const c = this.c;
+		const l11c = this.l11c;
+		const l11r = this.l11r;
+		if (c === 0) return false;
+		if (l11c === c - 1 && l11r === r) return false;
+		return true;
+	};
+	
+	c_state.prototype.can_move_right = function() {
+		const r = this.r;
+		const c = this.c;
+		const l11c = this.l11c;
+		const l11r = this.l11r;
+		if (c === 2) return false;
+		return true;
+	};
 	
 	c_state.prototype.key = function() {
-		throw new Error("implement me");
+		return '' + this.c + this.r + this.l11c + this.l11r;
 	};
-	
+
+	c_state.prototype.visit_down = function() {
+		const s = new c_state(this);
+		s.path.push('down');
+		if (s.l11c === s.c && s.l11r === s.r) {
+			++s.l11r;
+		}
+		++s.r;
+		if (states.has(s.key())) {
+			const other = states.get(s.key());
+			if (s.path.length >= other.path.length) {
+				return;
+			}
+		}
+		states.set(s.key(), s);
+		if (s.at_goal()) {
+			goal_state = s;
+		} else {
+			s.visit_children();
+		}
+	};
+
+	c_state.prototype.visit_up = function() {
+		const s = new c_state(this);
+		s.path.push('up');
+		if (s.l11c === s.c && s.l11r === s.r) {
+			--s.l11r;
+		}
+		--s.r;
+		if (states.has(s.key())) {
+			const other = states.get(s.key());
+			if (s.path.length >= other.path.length) {
+				return;
+			}
+		}
+		states.set(s.key(), s);
+		if (s.at_goal()) {
+			goal_state = s;
+		} else {
+			s.visit_children();
+		}
+	};
+
+	c_state.prototype.visit_left = function() {
+		const s = new c_state(this);
+		s.path.push('left');
+		--s.c;
+		if (states.has(s.key())) {
+			const other = states.get(s.key());
+			if (s.path.length >= other.path.length) {
+				return;
+			}
+		}
+		states.set(s.key(), s);
+		if (s.at_goal()) {
+			goal_state = s;
+		} else {
+			s.visit_children();
+		}
+	};
+
+	c_state.prototype.visit_right = function() {
+		const s = new c_state(this);
+		s.path.push('right');
+		if (s.l11c === s.c && s.l11r === s.r) {
+			++s.l11c;
+		}
+		++s.c;
+		if (states.has(s.key())) {
+			const other = states.get(s.key());
+			if (s.path.length >= other.path.length) {
+				return;
+			}
+		}
+		states.set(s.key(), s);
+		if (s.at_goal()) {
+			goal_state = s;
+		} else {
+			s.visit_children();
+		}
+	};
+
 	c_state.prototype.visit_children = function() {
-		if (this.path.length + 1 > max_path_length) return;
-		throw new Error("implement me");
+		if (goal_state !== null && this.path.length + 1 >= goal_state.path.length) {
+			return;
+		}
+		if (this.path.length + 1 > max_path_length) {
+			return;
+		}
+		if (!states.has(this.key())) return;
+		if (this.can_move_down()) {
+			this.visit_down();
+		}
+		if (!states.has(this.key())) return;
+		if (this.can_move_up()) {
+			this.visit_up();
+		}
+		if (!states.has(this.key())) return;
+		if (this.can_move_left()) {
+			this.visit_left();
+		}
+		if (!states.has(this.key())) return;
+		if (this.can_move_right()) {
+			this.visit_right();
+		}
 	};
-	
-	c_state.prototype.visit = function(move) {
-	
-	};
-	
+
 	const states = new Map();
-	const root = new c_state();
+	const root = new c_state({ c: 0, r: 0, l11c: 2, l11r: 4, path: [], parent: null });
 	states.set(root.key(), root);
-	let solution = null;
 	
 	document.writeln("<pre>")
 	document.writeln('running with max_path_length ' + max_path_length);
 	root.visit_children();
-	if (solution === null) {
+	if (goal_state === null) {
 		document.writeln('solution not found');
 	} else {
-		solution.forEach(move => document.writeln(move));
+		goal_state.path.reverse().forEach(move => document.writeln(move));
 	}
 	document.writeln("</pre>")
 	
