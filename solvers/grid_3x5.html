@@ -1,8 +1,10 @@
 <script>
-	const max_path_length = 11;
+	const max_path_length = 48;
 	const goal_c = 2;
 	const goal_r = 4;
 	let goal_state = null;
+
+	let visits = 0;
 
 	// 3 x 5
 
@@ -146,6 +148,7 @@
 	};
 
 	c_state.prototype.visit_children = function() {
+		++visits;
 		if (goal_state !== null && this.path.length + 1 >= goal_state.path.length) {
 			return;
 		}
@@ -177,10 +180,12 @@
 	document.writeln("<pre>")
 	document.writeln('running with max_path_length ' + max_path_length);
 	root.visit_children();
+	document.writeln('states visited: ' + visits);
 	if (goal_state === null) {
 		document.writeln('solution not found');
 	} else {
-		goal_state.path.reverse().forEach(move => document.writeln(move));
+		document.writeln('moves: ' + goal_state.path.length);
+		goal_state.path.forEach(move => document.writeln(move));
 	}
 	document.writeln("</pre>")
 	
