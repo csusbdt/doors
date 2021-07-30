@@ -2,30 +2,44 @@ import g from '../canvasapp.js';
 
 let bc = 1;
 let br = 1;
-let uc = 1;
-let ur = 0;
-let dc = 1;
-let dr = 2;
+let u11c = 1;
+let u11r = 0;
+let r11c = 1;
+let r11r = 2;
+let l21c = 1;
+let l21r = 2;
 
 g.set_design_size(668, 1080);
 
 const b_loop     = g.loop(g.frames(i_box ));
-const u_loop     = g.loop(g.frames(i_l2  ));
-const d_loop     = g.loop(g.frames(i_l2  ));
-const exit1_loop = g.loop(g.frames(i_exit), 10, 530, 7);
-const exit2_loop = g.loop(g.frames(i_exit), 10, 530, 607);
+const u1_loop    = g.loop(g.frames(i_u1  ));
+const r1_loop    = g.loop(g.frames(i_r1  ));
+const l2_loop    = g.loop(g.frames(i_l2  ));
+const exit1_loop = g.loop(g.frames(i_exit_left), 10, 530, 7);
+const exit2_loop = g.loop(g.frames(i_exit_right), 10, 530, 607);
+const exit3_loop = g.loop(g.frames(i_exit_down), 10, 530, 607);
 
 const spf = 1/24;
 
-const b_left_frames  = [];
-const b_right_frames = [];
-const b_down_frames  = [];
-const b_up_frames    = [];
+const b_left_frames   = [];
+const b_right_frames  = [];
+const b_down_frames   = [];
+const b_up_frames     = [];
 
-const u_left_frames  = [];
-const u_right_frames = [];
-const u_down_frames  = [];
-const u_up_frames    = [];
+const u1_left_frames  = [];
+const u1_right_frames = [];
+const u1_down_frames  = [];
+const u1_up_frames    = [];
+
+const r1_left_frames  = [];
+const r1_right_frames = [];
+const r1_down_frames  = [];
+const r1_up_frames    = [];
+
+const l2_left_frames  = [];
+const l2_right_frames = [];
+const l2_down_frames  = [];
+const l2_up_frames    = [];
 
 const n = 5;
 for (let i = 0; i < n; ++i) {
@@ -35,15 +49,20 @@ for (let i = 0; i < n; ++i) {
 	b_down_frames.push(g.frame(i_box, spf, 0, d));
 	b_up_frames.push(g.frame(i_box, spf, 0, -d));
 
-	u_left_frames.push(g.frame(i_l2, spf, -d, 0));
-	u_right_frames.push(g.frame(i_l2, spf, d, 0));
-	u_down_frames.push(g.frame(i_l2, spf, 0, d));
-	u_up_frames.push(g.frame(i_l2, spf, 0, -d));
+	u1_left_frames.push(g.frame(i_l2, spf, -d, 0));
+	u1_right_frames.push(g.frame(i_l2, spf, d, 0));
+	u1_down_frames.push(g.frame(i_l2, spf, 0, d));
+	u1_up_frames.push(g.frame(i_l2, spf, 0, -d));
 
-	// d_left_frames.push(g.frame(i_u1, spf, -d, 0));
-	// d_right_frames.push(g.frame(i_u1, spf, d, 0));
-	// d_down_frames.push(g.frame(i_u1, spf, 0, d));
-	// d_up_frames.push(g.frame(i_u1, spf, 0, -d));
+	r1_left_frames.push(g.frame(i_r1, spf, -d, 0));
+	r1_right_frames.push(g.frame(i_r1, spf, d, 0));
+	r1_down_frames.push(g.frame(i_r1, spf, 0, d));
+	r1_up_frames.push(g.frame(i_r1, spf, 0, -d));
+
+	l2_left_frames.push(g.frame(i_l2, spf, -d, 0));
+	l2_right_frames.push(g.frame(i_l2, spf, d, 0));
+	l2_down_frames.push(g.frame(i_l2, spf, 0, d));
+	l2_up_frames.push(g.frame(i_l2, spf, 0, -d));
 }
 
 const b_left   = g.once(b_left_frames);
