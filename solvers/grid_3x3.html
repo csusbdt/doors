@@ -1,271 +1,173 @@
 <script>
-	const max_path_length = 48;
-	const goal_c = 2;
-	const goal_r = 2;
-	let goal_state = null;
 
-	const hazard_c = 0;
-	const hazard_r = 1;
+	let c = 2;
+	let r = 0;
+	let rc = 1;
+	let rr = 0;
+	let uc = 2;
+	let ur = 1;
+	let Rc = 0;
+	let Rr = 1;
+	let Lc = 1;
+	let Lr = 2;
+	
+	function state() {
+		return '' + c + r + rc + rr + uc + ur + Rc + Rr + Lc + Lr;
+	}
 
+	function expand(s) {
+		c  = parseInt(s.at(0));
+		r  = parseInt(s.at(1));
+		rc = parseInt(s.at(2));
+		rr = parseInt(s.at(3));
+		uc = parseInt(s.at(4));
+		ur = parseInt(s.at(5));
+		Rc = parseInt(s.at(6));
+		Rr = parseInt(s.at(7));
+		Lc = parseInt(s.at(8));
+		Lr = parseInt(s.at(9));
+	}
+
+	function hazard() {
+		if (c === 1 && r === 2) {
+			if (rc === c && rr === r) return false;
+			if (uc === c && ur === r) return false;
+			if (Lc === c && Lr === r) return false;
+			if (Rc === c && Rr === r) return false;
+			return true;
+		}
+		if (c === 2 && r === 2) {
+			if (uc === c && ur === r) return false;
+			if (Lc === c && Lr === r) return false;
+			return true;
+		}
+		return false;
+	}
+
+	function goal() {
+		if (c === 0 && r === 2) {
+			if (rc === c && rr === r) return false;
+			if (uc === c && ur === r) return false;
+			if (Rc === c && Rr === r) return false;
+			return true;
+		}
+		return false;
+	}
+
+	const moves = ['left', 'right', 'up', 'down'];
+
+	function can(move) {
+		if (move === 'left') {
+			if (c === 0) return false;
+			if (ur === r && uc === c - 1) return false;
+			if (rr === r && rc === c - 1) {
+				if (Rc === c && Rr === r) return false;
+			}
+			if (Lr === r && Lc === c - 1) return false;
+			return true;
+		} else if (move === 'right') {
+			if (c === 2) return false;
+			if (rr === r && rc === c + 1) return false;
+			if (ur === r && uc === c + 1) return false;
+			if (Rr === r && Rc === c + 1) return false;
+			return true;
+		} else if (move === 'up') {
+			if (r === 0) return false;
+			if (rc === c && rr === r - 1) return false;
+			if (uc === c && ur === r - 1) return false;
+			if (Lc === c && Lr === r - 1) return false;
+			if (Rc === c && Rr === r - 1) return false;
+			return true;
+		} else if (move === 'down') {
+			if (r === 2) return false;
+			if (rc === c && rr === r + 1) return false;
+			if (uc === c && ur === r + 1) {
+				if (rc === c && rr === r) return false;
+				if (Lc === c && Lr === r) return false;
+				if (Rc === c && Rr === r) return false;
+			}
+			if (Lc === c && Lr === r + 1) return false;
+			if (Rc === c && Rr === r + 1) return false;
+			return true;
+		} else {
+			throw new Error('invalid move');
+		}
+	}
+
+	function go(move) {
+		if (move === 'left') {
+			if (rc === c && rr === r) --rc;
+			if (uc === c && ur === r) --uc;
+			if (Rc === c && Rr === r) --Rc;
+			--c;
+		} else if (move === 'right') {
+			if (uc === c && ur === r) ++uc;
+			if (Lc === c && Lr === r) ++Lc;
+			++c;
+		} else if (move === 'up') {
+			if (rc === c && rr === r) --rr;
+			if (uc === c && ur === r) {
+				if (Rc === c && Rr === r || Lc === c && Lr === r) --ur;
+			}
+			if (Lc === c && Lr === r) --Lr;
+			if (Rc === c && Rr === r) --Rr;
+			--r;
+		} else if (move === 'down') {
+			if (rc === c && rr === r) ++rr;
+			if (uc === c && ur === r) ++ur;
+			if (Lc === c && Lr === r) ++Lr;
+			if (Rc === c && Rr === r) ++Rr;
+			++r;
+		} else {
+			throw new Error('invalid move');
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////
+	//
+	// start generic code
+	//
+	/////////////////////////////////////////////////////////////////////////////
+
+	const paths = new Map();
+	paths.set(state(), []); // initial state
+	solution = null;
 	let visits = 0;
 
-	// 3 x 3
-
-	function c_state(s) {
-		this.c = s.c;
-		this.r = s.r;
-		this.l21c = s.l21c;
-		this.l21r = s.l21r;
-		this.u11r = s.u11r;
-		this.u11c = s.u11c;
-		this.r11r = s.r11r;
-		this.r11c = s.r11c;
-		this.path = s.path.slice();
-	}
-
-	c_state.prototype.at_goal = function() {
-		// allow r11
-		if (this.l21c === goal_c && this.l21r === goal_r) {
-			return false;
-		}
-		if (this.u11c === goal_c && this.u11r === goal_r) {
-			return false;
-		}
-		return this.c === goal_c && this.r === goal_r;
-	};
-	
-	c_state.prototype.can_move_up = function() {
-		const r = this.r;
-		const c = this.c;
-		const l21c = this.l21c;
-		const l21r = this.l21r;
-		const u11c = this.u11c;
-		const u11r = this.u11r;
-		const r11c = this.r11c;
-		const r11r = this.r11r;
-		if (r === 0) return false;
-		if (l21c === c && l21r === r - 1) return false;
-		if (u11c === c && u11r === r - 1) return false;
-		if (r11c === c && r11r === r - 1) return false;
-		if (c === 0 && r === 2) {
-			if (r11c === c && r11r === r) return true;
-			if (u11c === c && u11r === r && l21c === c && l21r === r) return true;
-			return false;
-		}
-		return true;
-	}
-	
-	c_state.prototype.can_move_down = function() {
-		const r = this.r;
-		const c = this.c;
-		const l21c = this.l21c;
-		const l21r = this.l21r;
-		const u11c = this.u11c;
-		const u11r = this.u11r;
-		const r11c = this.r11c;
-		const r11r = this.r11r;
-		if (r === 2) return false;
-		if (l21c === c && l21r === r && u11c === c && u11r === r + 1) return false;
-		if (l21c === c && l21r === r + 1) return false;
-		if (r11c === c && r11r === r + 1) return false;
-		if (c === 0 && r === 0) {
-			if (r11c === c && r11r === r) return true;
-			if (u11c === c && u11r === r && l21c === c && l21r === r) return true;
-			return false;
-		}
-		return true;
-	}
-	
-	c_state.prototype.can_move_left = function() {
-		const r = this.r;
-		const c = this.c;
-		const l21c = this.l21c;
-		const l21r = this.l21r;
-		const u11c = this.u11c;
-		const u11r = this.u11r;
-		const r11c = this.r11c;
-		const r11r = this.r11r;
-		if (c === 0) return false;
-		if (l21c === c - 1 && l21r === r) return false;
-		if (u11c === c - 1 && u11r === r) return false;
-		if (u11c === c && u11r === r && u11c === c - 1 && u11r === r) return false;
-		if (c === 1 && r === 1) {
-			if (u11c === c && u11r === r) return true;
-			if (r11c === c && r11r === r) return true;
-			return false;
-		}
-		return true;
-	};
-	
-	c_state.prototype.can_move_right = function() {
-		const r = this.r;
-		const c = this.c;
-		const l21c = this.l21c;
-		const l21r = this.l21r;
-		const u11c = this.u11c;
-		const u11r = this.u11r;
-		const r11c = this.r11c;
-		const r11r = this.r11r;
-		if (c === 2) return false;
-		if (u11c === c + 1 && u11r === r) return false;
-		if (r11c === c + 1 && r11r === r) return false;
-		return true;
-	};
-	
-	c_state.prototype.key = function() {
-		return '' + this.c + this.r + 
-			this.l21c + this.l21r + 
-			this.u11c + this.u11r + 
-			this.r11c + this.r11r;
-	};
-
-	c_state.prototype.visit_down = function() {
-		const s = new c_state(this);
-		s.path.push('down');
-		if (s.l21c === s.c && s.l21r === s.r) {
-			++s.l21r;
-		}
-		if (s.u11c === s.c && s.u11r === s.r) {
-			++s.u11r;
-		}
-		if (s.r11c === s.c && s.r11r === s.r) {
-			++s.r11r;
-		}
-		++s.r;
-		if (states.has(s.key())) {
-			const other = states.get(s.key());
-			if (s.path.length >= other.path.length) {
-				return;
-			}
-		}
-		states.set(s.key(), s);
-		if (s.at_goal()) {
-			goal_state = s;
-		} else {
-			s.visit_children();
-		}
-	};
-
-	c_state.prototype.visit_up = function() {
-		const s = new c_state(this);
-		s.path.push('up');
-		if (s.l21c === s.c && s.l21r === s.r) {
-			if (s.u11c === s.c && s.u11r === s.r) {
-				--s.u11r;
-			}
-			--s.l21r;
-		}
-		if (s.r11c === s.c && s.r11r === s.r) {
-			--s.r11r;
-		}
-		--s.r;
-		if (states.has(s.key())) {
-			const other = states.get(s.key());
-			if (s.path.length >= other.path.length) {
-				return;
-			}
-		}
-		states.set(s.key(), s);
-		if (s.at_goal()) {
-			goal_state = s;
-		} else {
-			s.visit_children();
-		}
-	};
-
-	c_state.prototype.visit_left = function() {
-		const s = new c_state(this);
-		if (s.u11c === s.c && s.u11r === s.r) {
-			--s.u11c;
-		}
-		if (s.r11c === s.c && s.r11r === s.r) {
-			--s.r11c;
-		}
-		s.path.push('left');
-		--s.c;
-		if (states.has(s.key())) {
-			const other = states.get(s.key());
-			if (s.path.length >= other.path.length) {
-				return;
-			}
-		}
-		states.set(s.key(), s);
-		if (s.at_goal()) {
-			goal_state = s;
-		} else {
-			s.visit_children();
-		}
-	};
-
-	c_state.prototype.visit_right = function() {
-		const s = new c_state(this);
-		s.path.push('right');
-		if (s.l21c === s.c && s.l21r === s.r) {
-			++s.l21c;
-		}
-		if (s.u11c === s.c && s.u11r === s.r) {
-			++s.u11c;
-		}
-		++s.c;
-		if (states.has(s.key())) {
-			const other = states.get(s.key());
-			if (s.path.length >= other.path.length) {
-				return;
-			}
-		}
-		states.set(s.key(), s);
-		if (s.at_goal()) {
-			goal_state = s;
-		} else {
-			s.visit_children();
-		}
-	};
-
-	c_state.prototype.visit_children = function() {
+	function visit(s) {
 		++visits;
-		if (goal_state !== null && this.path.length + 1 >= goal_state.path.length) {
+		const p = paths.get(s);
+		if (solution !== null && solution.length <= p.length + 1) {
 			return;
 		}
-		if (this.path.length + 1 > max_path_length) {
-			return;
-		}
-		if (!states.has(this.key())) return;
-		if (this.can_move_down()) {
-			this.visit_down();
-		}
-		if (!states.has(this.key())) return;
-		if (this.can_move_up()) {
-			this.visit_up();
-		}
-		if (!states.has(this.key())) return;
-		if (this.can_move_left()) {
-			this.visit_left();
-		}
-		if (!states.has(this.key())) return;
-		if (this.can_move_right()) {
-			this.visit_right();
-		}
-	};
+		const child_states = [];
+		moves.forEach(move => {
+			expand(s);
+			if (can(move)) {
+				go(move);
+				if (hazard()) return;
+				if (paths.has(state()) && paths.get(state()).length <= p.length + 1) return;
+				paths.set(state(), p.concat(move));
+				if (goal()) {
+					solution = paths.get(state());
+				} else {
+					child_states.push(state());
+				}
+			}
+		});
+		child_states.forEach(s => visit(s));
+	}
 
-	const states = new Map();
-	const root = new c_state({ 
-		c: 2, r: 0, 
-		l21c: 1, l21r: 2, 
-		u11c: 2, u11r: 1, 
-		r11c: 1, r11r: 0, 
-		path: [] 
-	});
-	states.set(root.key(), root);
+	visit(state());
 	
 	document.writeln("<pre>")
-	document.writeln('running with max_path_length ' + max_path_length);
-	root.visit_children();
+//	document.writeln('running with max_path_length ' + max_path_length);
 	document.writeln('states visited: ' + visits);
-	if (goal_state === null) {
+	if (solution === null) {
 		document.writeln('solution not found');
 	} else {
-		document.writeln('moves: ' + goal_state.path.length);
-		goal_state.path.forEach(move => document.writeln(move));
+		document.writeln('moves: ' + solution.length);
+		solution.forEach(move => document.writeln(move));
 	}
 	document.writeln("</pre>")
 	

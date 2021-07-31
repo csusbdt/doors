@@ -1,0 +1,275 @@
+<script>
+	const max_path_length = 48;
+	const goal_c = 2;
+	const goal_r = 2;
+	let goal_state = null;
+
+	const hazard_c = 0;
+	const hazard_r = 1;
+
+	let visits = 0;
+
+	// 3 x 3
+
+	function c_state(s) {
+		this.c = s.c;
+		this.r = s.r;
+		this.r11r = s.r11r;
+		this.r11c = s.r11c;
+		this.u11r = s.u11r;
+		this.u11c = s.u11c;
+		this.path = s.path.slice();
+		this.l21c = s.l21c;
+		this.l21r = s.l21r;
+//		this.r21c = s.r21c;
+//		this.r21r = s.r21r;
+	}
+
+	c_state.prototype.at_goal = function() {
+		// allow r11
+		if (this.l21c === goal_c && this.l21r === goal_r) {
+			return false;
+		}
+		if (this.u11c === goal_c && this.u11r === goal_r) {
+			return false;
+		}
+		return this.c === goal_c && this.r === goal_r;
+	};
+	
+	c_state.prototype.can_move_up = function() {
+		const r = this.r;
+		const c = this.c;
+		const l21c = this.l21c;
+		const l21r = this.l21r;
+		const u11c = this.u11c;
+		const u11r = this.u11r;
+		const r11c = this.r11c;
+		const r11r = this.r11r;
+		if (r === 0) return false;
+		if (l21c === c && l21r === r - 1) return false;
+		if (u11c === c && u11r === r - 1) return false;
+		if (r11c === c && r11r === r - 1) return false;
+		if (c === 0 && r === 2) {
+			if (r11c === c && r11r === r) return true;
+			if (u11c === c && u11r === r && l21c === c && l21r === r) return true;
+			return false;
+		}
+		return true;
+	}
+	
+	c_state.prototype.can_move_down = function() {
+		const r = this.r;
+		const c = this.c;
+		const l21c = this.l21c;
+		const l21r = this.l21r;
+		const u11c = this.u11c;
+		const u11r = this.u11r;
+		const r11c = this.r11c;
+		const r11r = this.r11r;
+		if (r === 2) return false;
+		if (l21c === c && l21r === r && u11c === c && u11r === r + 1) return false;
+		if (l21c === c && l21r === r + 1) return false;
+		if (r11c === c && r11r === r + 1) return false;
+		if (c === 0 && r === 0) {
+			if (r11c === c && r11r === r) return true;
+			if (u11c === c && u11r === r && l21c === c && l21r === r) return true;
+			return false;
+		}
+		return true;
+	}
+	
+	c_state.prototype.can_move_left = function() {
+		const r = this.r;
+		const c = this.c;
+		const l21c = this.l21c;
+		const l21r = this.l21r;
+		const u11c = this.u11c;
+		const u11r = this.u11r;
+		const r11c = this.r11c;
+		const r11r = this.r11r;
+		if (c === 0) return false;
+		if (l21c === c - 1 && l21r === r) return false;
+		if (u11c === c - 1 && u11r === r) return false;
+		if (u11c === c && u11r === r && u11c === c - 1 && u11r === r) return false;
+		if (c === 1 && r === 1) {
+			if (u11c === c && u11r === r) return true;
+			if (r11c === c && r11r === r) return true;
+			return false;
+		}
+		return true;
+	};
+	
+	c_state.prototype.can_move_right = function() {
+		const r = this.r;
+		const c = this.c;
+		const l21c = this.l21c;
+		const l21r = this.l21r;
+		const u11c = this.u11c;
+		const u11r = this.u11r;
+		const r11c = this.r11c;
+		const r11r = this.r11r;
+		if (c === 2) return false;
+		if (u11c === c + 1 && u11r === r) return false;
+		if (r11c === c + 1 && r11r === r) return false;
+		return true;
+	};
+	
+	c_state.prototype.key = function() {
+		return '' + this.c + this.r + 
+			this.l21c + this.l21r + 
+			this.u11c + this.u11r + 
+			this.r11c + this.r11r;
+	};
+
+	c_state.prototype.visit_down = function() {
+		const s = new c_state(this);
+		s.path.push('down');
+		if (s.l21c === s.c && s.l21r === s.r) {
+			++s.l21r;
+		}
+		if (s.u11c === s.c && s.u11r === s.r) {
+			++s.u11r;
+		}
+		if (s.r11c === s.c && s.r11r === s.r) {
+			++s.r11r;
+		}
+		++s.r;
+		if (states.has(s.key())) {
+			const other = states.get(s.key());
+			if (s.path.length >= other.path.length) {
+				return;
+			}
+		}
+		states.set(s.key(), s);
+		if (s.at_goal()) {
+			goal_state = s;
+		} else {
+			s.visit_children();
+		}
+	};
+
+	c_state.prototype.visit_up = function() {
+		const s = new c_state(this);
+		s.path.push('up');
+		if (s.l21c === s.c && s.l21r === s.r) {
+			if (s.u11c === s.c && s.u11r === s.r) {
+				--s.u11r;
+			}
+			--s.l21r;
+		}
+		if (s.r11c === s.c && s.r11r === s.r) {
+			--s.r11r;
+		}
+		--s.r;
+		if (states.has(s.key())) {
+			const other = states.get(s.key());
+			if (s.path.length >= other.path.length) {
+				return;
+			}
+		}
+		states.set(s.key(), s);
+		if (s.at_goal()) {
+			goal_state = s;
+		} else {
+			s.visit_children();
+		}
+	};
+
+	c_state.prototype.visit_left = function() {
+		const s = new c_state(this);
+		if (s.u11c === s.c && s.u11r === s.r) {
+			--s.u11c;
+		}
+		if (s.r11c === s.c && s.r11r === s.r) {
+			--s.r11c;
+		}
+		s.path.push('left');
+		--s.c;
+		if (states.has(s.key())) {
+			const other = states.get(s.key());
+			if (s.path.length >= other.path.length) {
+				return;
+			}
+		}
+		states.set(s.key(), s);
+		if (s.at_goal()) {
+			goal_state = s;
+		} else {
+			s.visit_children();
+		}
+	};
+
+	c_state.prototype.visit_right = function() {
+		const s = new c_state(this);
+		s.path.push('right');
+		if (s.l21c === s.c && s.l21r === s.r) {
+			++s.l21c;
+		}
+		if (s.u11c === s.c && s.u11r === s.r) {
+			++s.u11c;
+		}
+		++s.c;
+		if (states.has(s.key())) {
+			const other = states.get(s.key());
+			if (s.path.length >= other.path.length) {
+				return;
+			}
+		}
+		states.set(s.key(), s);
+		if (s.at_goal()) {
+			goal_state = s;
+		} else {
+			s.visit_children();
+		}
+	};
+
+	c_state.prototype.visit_children = function() {
+		++visits;
+		if (goal_state !== null && this.path.length + 1 >= goal_state.path.length) {
+			return;
+		}
+		if (this.path.length + 1 > max_path_length) {
+			return;
+		}
+		if (!states.has(this.key())) return;
+		if (this.can_move_down()) {
+			this.visit_down();
+		}
+		if (!states.has(this.key())) return;
+		if (this.can_move_up()) {
+			this.visit_up();
+		}
+		if (!states.has(this.key())) return;
+		if (this.can_move_left()) {
+			this.visit_left();
+		}
+		if (!states.has(this.key())) return;
+		if (this.can_move_right()) {
+			this.visit_right();
+		}
+	};
+
+	const states = new Map();
+	const root = new c_state({ 
+		c: 2, r: 0, 
+		l21c: 1, l21r: 2, 
+		u11c: 2, u11r: 1, 
+		r11c: 1, r11r: 0, 
+		path: [] 
+	});
+	states.set(root.key(), root);
+	
+	document.writeln("<pre>")
+	document.writeln('running with max_path_length ' + max_path_length);
+	root.visit_children();
+	document.writeln('states visited: ' + visits);
+	if (goal_state === null) {
+		document.writeln('solution not found');
+	} else {
+		document.writeln('moves: ' + goal_state.path.length);
+		goal_state.path.forEach(move => document.writeln(move));
+	}
+	document.writeln("</pre>")
+	
+	</script>
+	
