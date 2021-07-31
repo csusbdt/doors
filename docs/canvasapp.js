@@ -538,7 +538,7 @@ function animation_loop() {
 	requestAnimationFrame(animation_loop);
 }
 
-requestAnimationFrame(animation_loop);
+addEventListener('load', () => requestAnimationFrame(animation_loop));
 
 //#endregion
 
