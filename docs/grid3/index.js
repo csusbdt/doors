@@ -15,9 +15,6 @@ const b_loop              = g.loop(g.frames(i_box ));
 const u1_loop             = g.loop(g.frames(i_u1  ));
 const r1_loop             = g.loop(g.frames(i_r1  ));
 const l2_loop             = g.loop(g.frames(i_l2  ));
-// const arrow_left_02_loop  = g.loop(g.frames(i_arrow_left_02));
-// const arrow_down_12_loop  = g.loop(g.frames(i_arrow_down_12));
-// const arrow_right_22_loop = g.loop(g.frames(i_arrow_right_22));
 const exit_1_loop         = g.loop(g.frames(i_exit_1));
 const exit_2_loop         = g.loop(g.frames(i_exit_2));
 const exit_3_loop         = g.loop(g.frames(i_exit_3));
@@ -100,7 +97,7 @@ for (let c = 0; c < 3; ++c) {
 	for (let r = 0; r < 3; ++r) {
 		const x = 83  + c * dx;
 		const y = 290 + r * dx;
-		t[c][r] = g.touch(g.rect(x, y, x + c * dx, y + c * dx));
+		t[c][r] = g.touch(g.rect(x, y, x + dx, y + dx));
 	}
 }
 
@@ -236,7 +233,7 @@ const view = () => {
 
 const move_down = () => {
 	if (bc === u1c && br === u1r) {
-		++ur;
+		++u1r;
 		u1_loop.stop();
 		u1_down.start();
 	}
@@ -281,9 +278,13 @@ const move_up = () => {
 const move_left = () => {
 	if (bc === r1c && br === r1r) {
 		--r1c;
+		r1_loop.stop();
+		r1_left.start();
 	}
 	if (bc === u1c && br === u1r) {
 		--u1c;
+		u1_loop.stop();
+		u1_left.start();
 	}
 	--bc;
 	b_loop.stop();
@@ -293,9 +294,13 @@ const move_left = () => {
 const move_right = () => {
 	if (bc === u1c && br === u1r) {
 		++u1c;
+		u1_loop.stop();
+		u1_right.start();
 	}
 	if (bc === l2c && br === l2r) {
 		++l2c;
+		l2_loop.stop();
+		l2_right.start();
 	}
 	++bc;
 	b_loop.stop();
@@ -320,9 +325,9 @@ b_left.starts(view);
 b_right.starts(view);
 b_down.starts(view);
 b_up.starts(view);
-//b_exit_1.starts(exit_1_loop, g.delay(.5).starts(g.goto('s1')));
-//b_exit_2.starts(exit_2_loop, g.delay(.5).starts(g.goto('s1')));
-//b_exit_3.starts(exit_3_loop, g.delay(.5).starts(g.goto('s1')));
+b_exit_1.starts(exit_1_loop, g.delay(.5).starts(g.goto('grid2')));
+b_exit_2.starts(exit_2_loop, g.delay(.5).starts(g.goto('grid2')));
+b_exit_3.starts(exit_3_loop, g.delay(.5).starts(g.goto('grid2')));
 
 window.addEventListener('load', () => {
 	b_loop.start();
