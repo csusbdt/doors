@@ -327,7 +327,7 @@ b_down.starts(view);
 b_up.starts(view);
 b_exit_1.starts(exit_1_loop, g.delay(.5).starts(g.goto('grid2')));
 b_exit_2.starts(exit_2_loop, g.delay(.5).starts(g.goto('s1')));
-b_exit_3.starts(exit_3_loop, g.delay(.5).starts(g.goto('s1')));
+b_exit_3.starts(exit_3_loop, g.delay(.5).starts(g.goto('grid4')));
 
 window.addEventListener('load', () => {
 	b_loop.start();

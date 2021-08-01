@@ -1,6 +1,6 @@
 const initial_state = {
-	page: 'grid3',
-	version: '10'
+	page: 'doors',
+	version: '11'
 };
 
 let state = null;
