@@ -2,6 +2,12 @@ import g from '../canvasapp.js';
 
 g.set_design_size(668, 1080);
 
+const back_loop = g.loop(g.frames(i_back_0));
+const back_once = g.once(g.frames([i_back_1, i_back_2]));
+const back = g.touch(g.circle(100, 980, 60)).make_independent();
+back.stops(back_loop).starts(back_once);
+back_once.starts(g.delay(.5).starts(g.goto('doors')));
+
 const blue_border = g.loop(g.frames(i_blue_border));
 const blue        = g.loop(g.frames(i_blue       ));
 const red_border  = g.loop(g.frames(i_red_border ));
@@ -133,6 +139,8 @@ const reset = () => {
 u.starts(reset);
 
 window.addEventListener('load', () => {
+	back_loop.start();
+	back.start();
 	if (g.get_page_state('red')) {
 		red.start();
 	} else {
