@@ -504,6 +504,10 @@ const remove_updatable = function(o) {
 	}
 };
 
+//const page_score = g.get_page_state('score');
+let score = new Image();
+score.src = '../images/hud/0.png';
+
 let previous_time = new Date().getTime() / 1000;
 
 function animation_loop() {
@@ -529,6 +533,7 @@ function animation_loop() {
 			// 		ctx.drawImage(fullscreen_image, 0, 0);
 			// 	}
 			// }
+			ctx.drawImage(score, 0, 0);
 			dirty = false;
 		}
 		let dt = current_time - previous_time;
@@ -538,7 +543,9 @@ function animation_loop() {
 	requestAnimationFrame(animation_loop);
 }
 
-addEventListener('load', () => requestAnimationFrame(animation_loop));
+addEventListener('load', () => {
+	requestAnimationFrame(animation_loop);
+});
 
 //#endregion
 
