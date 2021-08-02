@@ -2,22 +2,51 @@
 const cols = 3;
 const rows = 3;
 
-let c = 0;
-let r = 0;
-const objs = [];
+const objs    = [];
+const hazards = [];
+
+function c_hazard_left (c, r) { this.c = c; this.r = r; }
+function c_hazard_right(c, r) { this.c = c; this.r = r; }
+function c_hazard_up   (c, r) { this.c = c; this.r = r; }
+function c_hazard_down (c, r) { this.c = c; this.r = r; }
 
 function c_object(c, r) {
+	if (c < 0 || c >= cols || r < 0 || r >= rows) {
+		throw new Error('coordinates not in grid');
+	}
 	this.c = c;
 	this.r = r;
-	this.left_blockers  = [];
-	this.right_blockers = [];
-	this.up_blockers    = [];
-	this.down_blockers  = [];
+	this.left_blockers  = null;
+	this.right_blockers = null;
+	this.up_blockers    = null;
+	this.down_blockers  = null;
+	this.cohabitables   = null;
+}
+
+c_object.prototype.blocks = function(h) {
+	if (h instanceof c_hazard_left) {
+		return box.left_blockers.includes(this.constructor);
+	} else if (h instanceof c_hazard_right) {
+		return box.right_blockers.includes(this.constructor);
+	} else if (h instanceof c_hazard_up) {
+		return box.up_blockers.includes(this.constructor);
+	} else if (h instanceof c_hazard_down) {
+		return box.down_blockers.includes(this.constructor);
+	}
+};
+
+c_object.prototype.cohabit = function(o) {
+	for (let i = 0; i < this.cohabitables.length; ++i) {
+		if (cohabitables[i].includes(o.constructor)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 c_object.prototype.can = function(m) {	
 	if (m === 'left') {
-		if (c === 0) return false;
+		if (this.c === 0) return false;
 		for (let i = 0; i < objs.length; ++i) {
 			const o = objs[i];
 			if (o.c === this.c - 1 && o.r === this.r) {
@@ -29,7 +58,7 @@ c_object.prototype.can = function(m) {
 			}
 		}
 	} else if (m === 'right') {
-		if (c === cols - 1) return false;
+		if (this.c === cols - 1) return false;
 		for (let i = 0; i < objs.length; ++i) {
 			const o = objs[i];
 			if (o.c === this.c + 1 && o.r === this.r) {
@@ -41,7 +70,7 @@ c_object.prototype.can = function(m) {
 			}
 		}
 	} else if (m === 'up') {
-		if (r === 0) return false;
+		if (this.r === 0) return false;
 		for (let i = 0; i < objs.length; ++i) {
 			const o = objs[i];
 			if (o.c === this.c && o.r === this.r - 1) {
@@ -53,7 +82,7 @@ c_object.prototype.can = function(m) {
 			}
 		}
 	} else if (m === 'down') {
-		if (r === rows - 1) return false;
+		if (this.r === rows - 1) return false;
 		for (let i = 0; i < objs.length; ++i) {
 			const o = objs[i];
 			if (o.c === this.c && o.r === this.r + 1) {
@@ -77,121 +106,221 @@ c_object.prototype.move = function(m) {
 	else ++this.r;
 };
 
-function c_hazard_left(c, r) {
-	this.c = c;
-	this.r = r;
-}
-
-function c_hazard_right(c, r) {
-	this.c = c;
-	this.r = r;
-}
-
-function c_hazard_up(c, r) {
-	this.c = c;
-	this.r = r;
-}
-
-function c_hazard_down(c, r) {
-	this.c = c;
-	this.r = r;
-}
-
 function c_left1(c, r) {
 	c_object.call(this, c, r);
-	this.left_blockers.push(c_right1);
+	this.left_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2,           c_up2, c_down2 ];
+	this.right_blockers = [ c_left1, c_right1, c_up1, c_down1,          c_right2, c_up2, c_down2 ];
+	this.up_blockers    = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2, c_up2          ];
+	this.down_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2,        c_down2 ];
+	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 function c_right1(c, r) {
 	c_object.call(this, c, r);
+	this.left_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2,           c_up2, c_down2 ];
+	this.right_blockers = [ c_left1, c_right1, c_up1, c_down1,          c_right2, c_up2, c_down2 ];
+	this.up_blockers    = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2, c_up2          ];
+	this.down_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2,        c_down2 ];
+	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 function c_up1(c, r) {
 	c_object.call(this, c, r);
+	this.left_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2,           c_up2, c_down2 ];
+	this.right_blockers = [ c_left1, c_right1, c_up1, c_down1,          c_right2, c_up2, c_down2 ];
+	this.up_blockers    = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2, c_up2          ];
+	this.down_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2,        c_down2 ];
+	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 function c_down1(c, r) {
 	c_object.call(this, c, r);
+	this.left_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2,           c_up2, c_down2 ];
+	this.right_blockers = [ c_left1, c_right1, c_up1, c_down1,          c_right2, c_up2, c_down2 ];
+	this.up_blockers    = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2, c_up2          ];
+	this.down_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2,        c_down2 ];
+	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 function c_left2(c, r) {
 	c_object.call(this, c, r);
+	this.left_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.right_blockers = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.up_blockers    = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.down_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
 }
 
 function c_right2(c, r) {
 	c_object.call(this, c, r);
+	this.left_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.right_blockers = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.up_blockers    = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.down_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
 }
 
 function c_up2(c, r) {
 	c_object.call(this, c, r);
+	this.left_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.right_blockers = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.up_blockers    = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.down_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
 }
 
 function c_down2(c, r) {
 	c_object.call(this, c, r);
+	this.left_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.right_blockers = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.up_blockers    = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.down_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
+	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
+}
+
+function c_box(c, r) {
+	c_object.call(this, c, r);
+	this.left_blockers  = [ c_left1,           c_up1, c_down1, c_left2,           c_up2, c_down2 ];
+	this.right_blockers = [          c_right1, c_up1, c_down1,          c_right2, c_up2, c_down2 ];
+	this.up_blockers    = [ c_left1, c_right1, c_up1,          c_left2, c_right2, c_up2          ];
+	this.down_blockers  = [ c_left1, c_right1,        c_down1, c_left2, c_right2,        c_down2 ];
+	this.cohabitables   = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 c_left1.prototype  = Object.create(c_object.prototype);
 c_right1.prototype = Object.create(c_object.prototype);
 c_up1.prototype    = Object.create(c_object.prototype);
 c_down1.prototype  = Object.create(c_object.prototype);
-
 c_left2.prototype  = Object.create(c_object.prototype);
 c_right2.prototype = Object.create(c_object.prototype);
 c_up2.prototype    = Object.create(c_object.prototype);
 c_down2.prototype  = Object.create(c_object.prototype);
+c_box.prototype    = Object.create(c_object.prototype);
 
 Object.defineProperty(c_left1.prototype , 'constructor', { value: c_left1 , enumerable: false, writable: true });
 Object.defineProperty(c_right1.prototype, 'constructor', { value: c_right1, enumerable: false, writable: true });
 Object.defineProperty(c_up1.prototype   , 'constructor', { value: c_up1   , enumerable: false, writable: true });
 Object.defineProperty(c_down1.prototype , 'constructor', { value: c_down1 , enumerable: false, writable: true });
-
 Object.defineProperty(c_left2.prototype , 'constructor', { value: c_left2 , enumerable: false, writable: true });
 Object.defineProperty(c_right2.prototype, 'constructor', { value: c_right2, enumerable: false, writable: true });
 Object.defineProperty(c_up2.prototype   , 'constructor', { value: c_up2   , enumerable: false, writable: true });
 Object.defineProperty(c_down2.prototype , 'constructor', { value: c_down2 , enumerable: false, writable: true });
+Object.defineProperty(c_box.prototype   , 'constructor', { value: c_box   , enumerable: false, writable: true });
 
-// c_left1.prototype.can = function(m) {
-// 	if (!c_object.prototype.can.call(this)) return false;
-// 	for (let i = 0; i < objs.length; ++i) {
-// 		const o = objs[i];
-// 		if (o === this) continue;
-// 		if (o.r !== this.r) continue;
-// 		if (o.c !== this.c - 1) continue;
-// 		if (o instanceof c_right2) continue;
-// 		return false;
-// 	}
-// 	return true;
-// }
+function state() {
+	let s = '';
+	for (let i = 0; i < objs.length; ++i) {
+		const o = objs[i];
+		if (o.constructor.prototype === c_object) {
+			s = s + o.c + o.r;
+		}
+	}
+	return s;
+}
 
-const r1 = new c_right1(0, 1);
-const l1 = new c_left1(1, 1);
-objs.push(r1, l1);
-console.log(l1.can('left'));
-console.log(l1.can('right'));
+function expand(s) {
+	let j = 0;
+	for (let i = 0; i < objs.length; ++i) {
+		const o = obj[i];
+		if (o.constructor.prototype === c_object) {
+			o.c = parseInt(s.at(j++));
+			o.r = parseInt(s.at(j++));
+		}
+	}
+}
+
+const moves = ['left', 'right', 'up', 'down'];
+
+const goal_c = 0;
+const goal_r = 2;
+const box    = new c_box   (0, 0);
+const r1     = new c_right1(0, 1);
+const l1     = new c_left1 (1, 1);
+objs.push(box, r1, l1);
+
+// TODO: use cohabitables to loop through all possible initial positions of objects
+//       and use a criteria to print good ones
+
+const paths = new Map();
+solution = null;
+let visits = 0;
+
+function visit(s) {
+	++visits;
+	const p = paths.get(s);
+	if (solution !== null && solution.length <= p.length + 1) {
+		return;
+	}
+	const child_states = [];
+	moves.forEach(m => {
+		expand(s);
+		const c = box.c;
+		const r = box.r;
+		for (let i = 0; i < objs.length; ++i) {
+			const o = objs[i];
+			if (o.c === c && o.r === r) {
+				if (!o.can(m)) return;
+			}
+		}
+		for (let i = 0; i < objs.length; ++i) {
+			const o = objs[i];
+			if (o.c === c && o.r === r) {
+				o.move(m);
+			}
+		}
+		for (let i = 0; i < hazards.length; ++i) {
+			const h = hazards[i];
+			if (h.c === box.c && h.r === box.r) {
+				let blocked = false;
+				for (let j = 0; j < objs.length; ++j) {
+					const o = objs[j];
+					if (o.c === h.c && o.r === h.r) {
+						if (o.blocks(h)) {
+							blocked = true;
+							break;
+						}
+					}
+				}
+				if (!blocked) return;
+			}
+		}
+		const child_state = state();
+		if (paths.has(child_state) && paths.get(child_state).length <= p.length + 1) {
+			return;
+		}
+		paths.set(child_state, p.concat(m));
+		if (box.c === goal_c && box.r === goal_r) {
+			solution = paths.get(child_state);
+		} else {
+			child_states.push(child_state);
+		}
+	});
+	child_states.forEach(s => visit(s));
+}
+
+document.writeln("<pre>")
+document.writeln('running');
+
+paths.set(state(), []); // initial state
+visit(state());
+
+document.writeln('states visited: ' + visits);
+if (solution === null) {
+	document.writeln('solution not found');
+} else {
+	document.writeln('moves: ' + solution.length);
+	solution.forEach(m => document.writeln(m));
+}
+
+document.writeln("</pre>")
+
+
 
 
 
 
 /*
-
-
-	let c = 2;
-	let r = 0;
-	let dc = 2;
-	let dr = 0;
-	let rc = 1;
-	let rr = 1;
-	let uc = 0;
-	let ur = 2;
-	let Rc = 2;
-	let Rr = 0;
-	let Lc = 1;
-	let Lr = 2;
 	
-	function state() {
-		return '' + c + r + dc + dr + rc + rr + uc + ur + Rc + Rr + Lc + Lr;
-	}
-
 	function expand(s) {
 		c  = parseInt(s.at(0));
 		r  = parseInt(s.at(1));
@@ -234,7 +363,6 @@ console.log(l1.can('right'));
 		return false;
 	}
 
-	const moves = ['left', 'right', 'up', 'down'];
 
 	function can(move) {
 		if (move === 'left') {
