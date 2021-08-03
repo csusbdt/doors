@@ -51,10 +51,8 @@ c_object.prototype.can = function(m) {
 		for (let i = 0; i < objs.length; ++i) {
 			const o = objs[i];
 			if (o.c === this.c - 1 && o.r === this.r) {
-				for (let j = 0; j < objs.length; ++j) {
-					if (this.left_blockers.includes(objs[j].constructor)) {
-						return false;
-					}
+				if (this.left_blockers.includes(o.constructor)) {
+					return false;
 				}
 			}
 		}
@@ -63,10 +61,8 @@ c_object.prototype.can = function(m) {
 		for (let i = 0; i < objs.length; ++i) {
 			const o = objs[i];
 			if (o.c === this.c + 1 && o.r === this.r) {
-				for (let j = 0; j < objs.length; ++j) {
-					if (this.right_blockers.includes(objs[j].constructor)) {
-						return false;
-					}
+				if (this.right_blockers.includes(o.constructor)) {
+					return false;
 				}
 			}
 		}
@@ -75,10 +71,8 @@ c_object.prototype.can = function(m) {
 		for (let i = 0; i < objs.length; ++i) {
 			const o = objs[i];
 			if (o.c === this.c && o.r === this.r - 1) {
-				for (let j = 0; j < objs.length; ++j) {
-					if (this.up_blockers.includes(objs[j].constructor)) {
-						return false;
-					}
+				if (this.up_blockers.includes(o.constructor)) {
+					return false;
 				}
 			}
 		}
@@ -87,10 +81,8 @@ c_object.prototype.can = function(m) {
 		for (let i = 0; i < objs.length; ++i) {
 			const o = objs[i];
 			if (o.c === this.c && o.r === this.r + 1) {
-				for (let j = 0; j < objs.length; ++j) {
-					if (this.down_blockers.includes(objs[j].constructor)) {
-						return false;
-					}
+				if (this.down_blockers.includes(o.constructor)) {
+					return false;
 				}
 			}
 		}
@@ -234,10 +226,11 @@ const moves = ['left', 'right', 'up', 'down'];
 
 const goal_c = 0;
 const goal_r = 2;
-const box    = new c_box   (0, 0);
+hazards.push(new c_hazard_right(2, 1), new c_hazard_down(1, 2));
+const box    = new c_box  (0, 0);
+const u1     = new c_up1  (1, 1);
 const r1     = new c_right1(0, 1);
-const l1     = new c_left1 (1, 1);
-objs.push(box, r1, l1);
+objs.push(box, u1, r1);
 
 // TODO: use cohabitables to loop through all possible initial positions of objects
 //       and use a criteria to print good ones
@@ -259,6 +252,7 @@ function visit(s) {
 		const r = box.r;
 		for (let i = 0; i < objs.length; ++i) {
 			const o = objs[i];
+			// FIX HERE.  need to move objects that box would push
 			if (o.c === c && o.r === r) {
 				if (!o.can(m)) return;
 			}
@@ -289,7 +283,9 @@ function visit(s) {
 		if (paths.has(child_state) && paths.get(child_state).length <= p.length + 1) {
 			return;
 		}
-		paths.set(child_state, p.concat(m));
+		const child_path = p.concat(m);
+		console.log(child_path);
+		paths.set(child_state, child_path);
 		if (box.c === goal_c && box.r === goal_r) {
 			solution = paths.get(child_state);
 		} else {
