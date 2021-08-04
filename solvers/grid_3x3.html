@@ -11,173 +11,174 @@ function c_hazard_right(c, r) { this.c = c; this.r = r; }
 function c_hazard_up   (c, r) { this.c = c; this.r = r; }
 function c_hazard_down (c, r) { this.c = c; this.r = r; }
 
+c_hazard_left.prototype.blocked = function(...os) {
+	return os.some(o => o.constructor === c_left1 || o.constructor === c_left2)
+};
+
+c_hazard_right.prototype.blocked = function(...os) {
+	return os.some(o => o.constructor === c_right1 || o.constructor === c_right2)
+};
+
+c_hazard_up.prototype.blocked = function(...os) {
+	return os.some(o => o.constructor === c_up1 || o.constructor === c_up2)
+};
+
+c_hazard_down.prototype.blocked = function(...os) {
+	return os.some(o => o.constructor === c_down1 || o.constructor === c_down2)
+};
+
 function c_object(c, r) {
 	if (c < 0 || c >= cols || r < 0 || r >= rows) {
 		throw new Error('coordinates not in grid');
 	}
 	this.c = c;
 	this.r = r;
-	this.left_blockers  = null;
-	this.right_blockers = null;
-	this.up_blockers    = null;
-	this.down_blockers  = null;
-	this.cohabitables   = null;
+//	this.cohabitables = null;
 }
 
-c_object.prototype.blocks = function(h) {
-	if (h instanceof c_hazard_left) {
-		return box.left_blockers.includes(this.constructor);
-	} else if (h instanceof c_hazard_right) {
-		return box.right_blockers.includes(this.constructor);
-	} else if (h instanceof c_hazard_up) {
-		return box.up_blockers.includes(this.constructor);
-	} else if (h instanceof c_hazard_down) {
-		return box.down_blockers.includes(this.constructor);
-	}
-};
+// c_object.prototype.cohabit = function(o) {
+// 	for (let i = 0; i < this.cohabitables.length; ++i) {
+// 		if (cohabitables[i].includes(o.constructor)) {
+// 			return true;
+// 		}
+// 	}
+// 	return false;
+// }
 
-c_object.prototype.cohabit = function(o) {
-	for (let i = 0; i < this.cohabitables.length; ++i) {
-		if (cohabitables[i].includes(o.constructor)) {
-			return true;
-		}
-	}
-	return false;
-}
-
-c_object.prototype.can = function(m) {	
+function can(m) {
+	let d1 = null;
+	let d2 = null;
+	let s1 = null;
+	let s2 = null;
 	if (m === 'left') {
-		if (this.c === 0) return false;
-		for (let i = 0; i < objs.length; ++i) {
-			const o = objs[i];
-			if (o.c === this.c - 1 && o.r === this.r) {
-				if (this.left_blockers.includes(o.constructor)) {
-					return false;
-				}
-			}
-		}
+		if (c === 0) return false;
+		d1 = objs.find(o => o.c === c - 1 && o.r === r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor));
+		if (d1 && d1.constructor !== c_right1) return false;
+		d2 = objs.find(o => o.c === c - 1 && o.r === r && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor));
+		if (d2 && d2.constructor !== c_right2) return false;
+		s2 = objs.find(o => o.c === c && o.r === r && [c_right2, c_up2, c_down2].includes(o.constructor));
+		if (s2 && (d1 || d2)) return false;
+		s1 = s2 ? 
+			objs.find(o => o.c === c && o.r === r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor)) :
+			objs.find(o => o.c === c && o.r === r && [         c_right1, c_up1, c_down1].includes(o.constructor))
+		if (d1 && s1) return false;
 	} else if (m === 'right') {
-		if (this.c === cols - 1) return false;
-		for (let i = 0; i < objs.length; ++i) {
-			const o = objs[i];
-			if (o.c === this.c + 1 && o.r === this.r) {
-				if (this.right_blockers.includes(o.constructor)) {
-					return false;
-				}
-			}
-		}
+		if (c === cols) return false;
+		d1 = objs.find(o => o.c === c + 1 && o.r === r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor));
+		if (d1 && d1.constructor !== c_left1) return false;
+		d2 = objs.find(o => o.c === c + 1 && o.r === r && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor));
+		if (d2 && d2.constructor !== c_left2) return false;
+		s2 = objs.find(o => o.c === c && o.r === r && [c_left2, c_up2, c_down2].includes(o.constructor));
+		if (s2 && (d1 || d2)) return false;
+		s1 = s2 ? 
+			objs.find(o => o.c === c && o.r === r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor)) :
+			objs.find(o => o.c === c && o.r === r && [c_left1,           c_up1, c_down1].includes(o.constructor))
+		if (d1 && s1) return false;
 	} else if (m === 'up') {
-		if (this.r === 0) return false;
-		for (let i = 0; i < objs.length; ++i) {
-			const o = objs[i];
-			if (o.c === this.c && o.r === this.r - 1) {
-				if (this.up_blockers.includes(o.constructor)) {
-					return false;
-				}
-			}
-		}
+		if (r === 0) return false;
+		d1 = objs.find(o => o.c === c && o.r === r - 1 && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor));
+		if (d1 && d1.constructor !== c_down1) return false;
+		d2 = objs.find(o => o.c === c && o.r === r - 1 && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor));
+		if (d2 && d2.constructor !== c_down2) return false;
+		s2 = objs.find(o => o.c === c && o.r === r && [c_left2, c_right2, c_up2].includes(o.constructor));
+		if (s2 && (d1 || d2)) return false;
+		s1 = s2 ? 
+			objs.find(o => o.c === c && o.r === r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor)) :
+			objs.find(o => o.c === c && o.r === r && [c_left1, c_right1, c_up1         ].includes(o.constructor))
+		if (d1 && s1) return false;
 	} else if (m === 'down') {
-		if (this.r === rows - 1) return false;
-		for (let i = 0; i < objs.length; ++i) {
-			const o = objs[i];
-			if (o.c === this.c && o.r === this.r + 1) {
-				if (this.down_blockers.includes(o.constructor)) {
-					return false;
-				}
-			}
-		}
-	} else {
-		throw new Error('invalid move');
+		if (r === rows) return false;
+		d1 = objs.find(o => o.c === c && o.r === r + 1 && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor));
+		if (d1 && d1.constructor !== c_up1) return false;
+		d2 = objs.find(o => o.c === c && o.r === r + 1 && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor));
+		if (d2 && d2.constructor !== c_up2) return false;
+		s2 = objs.find(o => o.c === c && o.r === r && [c_left2, c_right2, c_down2].includes(o.constructor));
+		if (s2 && (d1 || d2)) return false;
+		s1 = s2 ? 
+			objs.find(o => o.c === c && o.r === r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor)) :
+			objs.find(o => o.c === c && o.r === r && [c_left1, c_right1,        c_down1].includes(o.constructor))
+		if (d1 && s1) return false;
 	}
+	const cohabiters = [d1, d2, s1, s2].filter(o => o);
+	if (hazards.some(h => h.blocked(cohabiters))) return true;
 	return true;
-};
+}
+
+function move(m) {
+	const s1 = objs.find(o => o.c === c && o.r === r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor));
+	const s2 = objs.find(o => o.c === c && o.r === r && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor));
+	if (m === 'left') {
+		--c;
+		if (s2 && s2.constructor !== c_left2) {
+			--s2.c;
+			if (s1) --s1.c;
+		} else if (s1 && s1.constructor !== c_left1) --s1.c;
+	} else if (m === 'right') {
+		++c;
+		if (s2 && s2.constructor !== c_right2) {
+			++s2.c;
+			if (s1) ++s1.c;
+		} else if (s1 && s1.constructor !== c_left1) ++s1.c;
+	} else if (m === 'up') {
+		--r;
+		if (s2 && s2.constructor !== c_up2) {
+			--s2.r;
+			if (s1) --s1.r;
+		} else if (s1 && s1.constructor !== c_up1) --s1.r;
+	} else if (m === 'down') {
+		++r;
+		if (s2 && s2.constructor !== c_down2) {
+			++s2.r;
+			if (s1) ++s1.r;
+		} else if (s1 && s1.constructor !== c_down1) ++s1.r;
+	}
+}
 
 c_object.prototype.move = function(m) {
-	if (m === 'left') --this.c;
+	if      (m === 'left' ) --this.c;
 	else if (m === 'right') ++this.c;
-	else if (m === 'up') --this.r;
-	else ++this.r;
+	else if (m === 'up'   ) --this.r;
+	else if (m === 'down' ) ++this.r;
+	else throw new Error();
 };
 
 function c_left1(c, r) {
 	c_object.call(this, c, r);
-	this.left_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2,           c_up2, c_down2 ];
-	this.right_blockers = [ c_left1, c_right1, c_up1, c_down1,          c_right2, c_up2, c_down2 ];
-	this.up_blockers    = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2, c_up2          ];
-	this.down_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2,        c_down2 ];
 	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 function c_right1(c, r) {
 	c_object.call(this, c, r);
-	this.left_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2,           c_up2, c_down2 ];
-	this.right_blockers = [ c_left1, c_right1, c_up1, c_down1,          c_right2, c_up2, c_down2 ];
-	this.up_blockers    = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2, c_up2          ];
-	this.down_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2,        c_down2 ];
-	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
+//	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 function c_up1(c, r) {
 	c_object.call(this, c, r);
-	this.left_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2,           c_up2, c_down2 ];
-	this.right_blockers = [ c_left1, c_right1, c_up1, c_down1,          c_right2, c_up2, c_down2 ];
-	this.up_blockers    = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2, c_up2          ];
-	this.down_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2,        c_down2 ];
-	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
+//	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 function c_down1(c, r) {
 	c_object.call(this, c, r);
-	this.left_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2,           c_up2, c_down2 ];
-	this.right_blockers = [ c_left1, c_right1, c_up1, c_down1,          c_right2, c_up2, c_down2 ];
-	this.up_blockers    = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2, c_up2          ];
-	this.down_blockers  = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2,        c_down2 ];
-	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
+//	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 function c_left2(c, r) {
 	c_object.call(this, c, r);
-	this.left_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.right_blockers = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.up_blockers    = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.down_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
+//	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
 }
 
 function c_right2(c, r) {
 	c_object.call(this, c, r);
-	this.left_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.right_blockers = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.up_blockers    = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.down_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
+//	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
 }
 
 function c_up2(c, r) {
 	c_object.call(this, c, r);
-	this.left_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.right_blockers = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.up_blockers    = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.down_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
+//	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
 }
 
 function c_down2(c, r) {
 	c_object.call(this, c, r);
-	this.left_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.right_blockers = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.up_blockers    = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.down_blockers  = [ c_left2, c_right2, c_up2, c_down2 ];
-	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
-}
-
-function c_box(c, r) {
-	c_object.call(this, c, r);
-	this.left_blockers  = [ c_left1,           c_up1, c_down1, c_left2,           c_up2, c_down2 ];
-	this.right_blockers = [          c_right1, c_up1, c_down1,          c_right2, c_up2, c_down2 ];
-	this.up_blockers    = [ c_left1, c_right1, c_up1,          c_left2, c_right2, c_up2          ];
-	this.down_blockers  = [ c_left1, c_right1,        c_down1, c_left2, c_right2,        c_down2 ];
-	this.cohabitables   = [ c_left1, c_right1, c_up1, c_down1, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 c_left1.prototype  = Object.create(c_object.prototype);
@@ -188,7 +189,6 @@ c_left2.prototype  = Object.create(c_object.prototype);
 c_right2.prototype = Object.create(c_object.prototype);
 c_up2.prototype    = Object.create(c_object.prototype);
 c_down2.prototype  = Object.create(c_object.prototype);
-c_box.prototype    = Object.create(c_object.prototype);
 
 Object.defineProperty(c_left1.prototype , 'constructor', { value: c_left1 , enumerable: false, writable: true });
 Object.defineProperty(c_right1.prototype, 'constructor', { value: c_right1, enumerable: false, writable: true });
@@ -198,10 +198,9 @@ Object.defineProperty(c_left2.prototype , 'constructor', { value: c_left2 , enum
 Object.defineProperty(c_right2.prototype, 'constructor', { value: c_right2, enumerable: false, writable: true });
 Object.defineProperty(c_up2.prototype   , 'constructor', { value: c_up2   , enumerable: false, writable: true });
 Object.defineProperty(c_down2.prototype , 'constructor', { value: c_down2 , enumerable: false, writable: true });
-Object.defineProperty(c_box.prototype   , 'constructor', { value: c_box   , enumerable: false, writable: true });
 
 function state() {
-	let s = '';
+	let s = '' + c + r;
 	for (let i = 0; i < objs.length; ++i) {
 		const o = objs[i];
 		if (o instanceof c_object) {
@@ -213,6 +212,8 @@ function state() {
 
 function expand(s) {
 	let j = 0;
+	c = parseInt(s.at(j++));
+	r = parseInt(s.at(j++));
 	for (let i = 0; i < objs.length; ++i) {
 		const o = objs[i];
 		if (o instanceof c_object) {
@@ -222,15 +223,16 @@ function expand(s) {
 	}
 }
 
-const moves = ['left', 'right', 'up', 'down'];
+//const moves = ['left', 'right', 'up', 'down'];
 
 const goal_c = 0;
 const goal_r = 2;
+let c = 0;
+let r = 0;
 hazards.push(new c_hazard_right(2, 1), new c_hazard_down(1, 2));
-const box    = new c_box  (0, 0);
-const u1     = new c_up1  (1, 1);
-const r1     = new c_right1(0, 1);
-objs.push(box, u1, r1);
+const u1 = new c_up1  (1, 1);
+const r1 = new c_right1(0, 1);
+objs.push(u1, r1);
 
 // TODO: use cohabitables to loop through all possible initial positions of objects
 //       and use a criteria to print good ones
@@ -245,40 +247,11 @@ function visit(s) {
 	if (solution !== null && solution.length <= p.length + 1) {
 		return;
 	}
-	const child_states = [];
-	moves.forEach(m => {
+	const child_states_to_visit = [];
+	['left', 'right', 'up', 'down'].forEach(m => {
 		expand(s);
-		const c = box.c;
-		const r = box.r;
-		for (let i = 0; i < objs.length; ++i) {
-			const o = objs[i];
-			// FIX HERE.  need to move objects that box would push
-			if (o.c === c && o.r === r) {
-				if (!o.can(m)) return;
-			}
-		}
-		for (let i = 0; i < objs.length; ++i) {
-			const o = objs[i];
-			if (o.c === c && o.r === r) {
-				o.move(m);
-			}
-		}
-		for (let i = 0; i < hazards.length; ++i) {
-			const h = hazards[i];
-			if (h.c === box.c && h.r === box.r) {
-				let blocked = false;
-				for (let j = 0; j < objs.length; ++j) {
-					const o = objs[j];
-					if (o.c === h.c && o.r === h.r) {
-						if (o.blocks(h)) {
-							blocked = true;
-							break;
-						}
-					}
-				}
-				if (!blocked) return;
-			}
-		}
+		if (!can(m)) return;
+		move(m);
 		const child_state = state();
 		if (paths.has(child_state) && paths.get(child_state).length <= p.length + 1) {
 			return;
@@ -286,13 +259,13 @@ function visit(s) {
 		const child_path = p.concat(m);
 		console.log(child_path);
 		paths.set(child_state, child_path);
-		if (box.c === goal_c && box.r === goal_r) {
-			solution = paths.get(child_state);
+		if (c === goal_c && r === goal_r) {
+			solution = child_path;
 		} else {
-			child_states.push(child_state);
+			child_states_to_visit.push(child_state);
 		}
 	});
-	child_states.forEach(s => visit(s));
+	child_states_to_visit.forEach(s => visit(s));
 }
 
 document.writeln("<pre>")
@@ -310,7 +283,6 @@ if (solution === null) {
 }
 
 document.writeln("</pre>")
-
 
 </script>
 	
