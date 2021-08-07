@@ -8,7 +8,7 @@ doors -> circles, grid1, s2
     house -> circles
   grid1 -> doors, grid2
     grid2 -> grid1, grid3
-	  grid3 -> grid2, grid4, s1
-	    s1 -> grid3
+	  grid3 -> grid2, grid4, grid5
+	    grid5 -> grid3
 		grid4 -> grid3, s3
 		  s3 -> grid4

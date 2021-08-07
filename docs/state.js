@@ -1,5 +1,5 @@
 const initial_state = {
-	page: 'grid5',
+	page: 'doors',
 	version: '11'
 };
 

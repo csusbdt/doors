@@ -111,12 +111,6 @@ function can(m) {
 		} else {
 			return false;
 		}
-		// const cohabiters = [d1, d2, s1, s2].filter(o => o);
-		// if (cohabiters.some(o => h.blocked(o))) {
-		// 	continue;
-		// } else {
-		// 	return false;
-		// }
 	}
 	return true;
 }
@@ -239,23 +233,6 @@ function expand(s) {
 	}
 }
 
-const goal_c = 0;
-const goal_r = 2;
-const goal_dir = 'left';
-let c = 0;
-let r = 0;
-hazards.push(new c_hazard_right(2, 1), new c_hazard_down(1, 2));
-const u1 = new c_up1  (1, 1);
-const r1 = new c_right1(0, 1);
-objs.push(u1, r1);
-
-// TODO: use cohabitables to loop through all possible initial positions of objects
-//       and use a criteria to print good ones
-
-const paths = new Map();
-solution = null;
-let visits = 0;
-
 function goal() {
 	if (c !== goal_c || r != goal_r) return false;
 	for (let i = 0; i < objs.length; ++i) {
@@ -290,7 +267,7 @@ function visit(s) {
 			return;
 		}
 		const child_path = p.concat(m);
-		console.log(child_path);
+//		console.log(child_path);
 		paths.set(child_state, child_path);
 		if (goal()) {
 			solution = child_path;
@@ -301,21 +278,59 @@ function visit(s) {
 	child_states_to_visit.forEach(s => visit(s));
 }
 
+const paths = new Map();
+solution = null;
+let visits = 0;
+
+let goal_c = 0;
+let goal_r = 2;
+const goal_dir = 'left';
+
+let c = -1;
+let r = -1;
+//hazards.push(new c_hazard_right(2, 2), new c_hazard_down(1, 2));
+//let u1 = null;
+//let r1 = null;
+//let l2 = null;
+//let r2 = null;
+//let d1 = null;
+//let d2 = null;
+
 document.writeln("<pre>")
-document.writeln('running');
+for (let x_c = 0; x_c < cols; ++x_c) {
+	for (let x_r = 0; x_r < rows; ++x_r) {
+		for (let d2_c = 0; d2_c < cols; ++d2_c) {
+			for (let d2_r = 0; d2_r < rows; ++d2_r) {
+				paths.clear();
+				objs.length = 0;
+				hazards.length = 0;
+				solution = null;
+				visits = 0;
+				c = x_c;
+				r = x_r;
+				if (goal()) continue;
+				u1 = new c_up1   (0, 2);				
+				objs.push(new c_right1(1, 1));
+				objs.push(new c_up1(0, 2));
+				objs.push(new c_down1(2, 0));
+				objs.push(new c_left2(1, 2));
+				objs.push(new c_right2(2, 0));
+				if (objs.some(o => o.c === d2_c && o.r === d2_r && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor))) {
+					continue;
+				}
+				objs.push(new c_down2(d2_c, d2_r));
+				//hazards.push(new c_hazard_right(2, 2), new c_hazard_down(1, 2));
+				const initial_state = state();
+				paths.set(state(), []);
+				visit(state());
+				if (solution !== null) {
+					console.log(initial_state, goal_c, goal_r);
+					console.log(solution);
+				}
+			}
+		}
 
-paths.set(state(), []); // initial state
-visit(state());
-
-document.writeln('states visited: ' + visits);
-if (solution === null) {
-	document.writeln('solution not found');
-} else {
-	document.writeln('moves: ' + solution.length);
-	solution.forEach(m => document.writeln(m));
+	}
 }
-
 document.writeln("</pre>")
-
 </script>
-	
