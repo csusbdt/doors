@@ -1,6 +1,7 @@
 import g from '../canvasapp.js';
 
 g.set_design_size(668, 1080);
+g.init_score(3);
 
 const adj_x = 210;
 const circle_filled   = g.loop(g.frames(i_circle_filled  ), 10, adj_x);
@@ -103,7 +104,6 @@ let circles   = 0;
 let squares   = 0;
 let triangles = 0;
 
-
 const reset = () => {
 	if (door11_opened.started()) {
 		door11_opened.stop();
@@ -137,7 +137,7 @@ const show_circle = () => {
 		reset();
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
 		circle_filled.start();
-		g.set_page_state('circles');
+		g.set_solved('circles');
 		g.delay(.6).starts(g.goto('circles')).start();
 	} else {
 		touches();
@@ -149,7 +149,7 @@ const show_square = () => {
 	if (circles === 1 || triangles === 1) {
 		reset();
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
-		g.set_page_state('squares');
+		g.set_solved('squares');
 		square_filled.start();
 		g.delay(.6).starts(g.goto('grid1')).start();
 	} else {
@@ -162,7 +162,7 @@ const show_triangle = () => {
 	if (circles === 1 || squares === 1) {
 		reset();
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
-		g.set_page_state('triangles');
+		g.set_solved('triangles');
 		triangle_filled.start();
 		g.delay(.6).starts(g.goto('s2')).start();
 	} else {
@@ -206,7 +206,6 @@ reset_close.stops(reset_opened).starts(reset_closing);
 
 const view = () => {
 	door_frames.start();
-	
 	door11_closed.start();
 	door12_closed.start();
 	door21_closed.start();
@@ -219,18 +218,17 @@ const view = () => {
 reset_closing.starts(view);
 
 window.addEventListener('load', e => {
-	const s = g.get_state('doors');
-	if (g.get_page_state('circles')) {
+	if (g.get_solved('circles')) {
 		circle_filled.start();
 	} else {
 		circle_border.start();
 	}
-	if (g.get_page_state('squares')) {
+	if (g.get_solved('squares')) {
 		square_filled.start();
 	} else {
 		square_border.start();
 	}
-	if (g.get_page_state('triangles')) {
+	if (g.get_solved('triangles')) {
 		triangle_filled.start();
 	} else {
 		triangle_border.start();

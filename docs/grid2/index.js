@@ -8,6 +8,7 @@ let lc = 1;
 let lr = 2;
 
 g.set_design_size(668, 1080);
+g.init_score(2);
 
 const b_loop     = g.loop(g.frames(i_box ));
 const u_loop     = g.loop(g.frames(i_u1  ));
@@ -150,7 +151,7 @@ const view = () => {
 	l_loop.start();
 
 	if (exit_1()) {
-		g.set_page_state('exit1');
+		g.set_solved('exit1');
 		b_exit_1.start();
 		// g.delay(.5).stops(exit1_loop).starts(
 		// 	g.delay(.5).starts(g.goto('grid1')),
@@ -159,7 +160,7 @@ const view = () => {
 		return;
 	}
 	if (exit_2()) {
-		g.set_page_state('exit2');
+		g.set_solved('exit2');
 		b_exit_2.start();
 		// g.delay(.5).stops(exit2_loop).starts(
 		// 	g.delay(.5).starts(g.goto('s1')),
@@ -256,7 +257,7 @@ window.addEventListener('load', () => {
 	b_loop.start();
 	u_loop.start();
 	l_loop.start();
-	if (g.get_page_state('exit1')) exit1_loop.start();
-	if (g.get_page_state('exit2')) exit2_loop.start();
+	if (g.get_solved('exit1')) exit1_loop.start();
+	if (g.get_solved('exit2')) exit2_loop.start();
 	view();
 });

@@ -288,19 +288,13 @@ const goal_dir = 'left';
 
 let c = -1;
 let r = -1;
-//hazards.push(new c_hazard_right(2, 2), new c_hazard_down(1, 2));
-//let u1 = null;
-//let r1 = null;
-//let l2 = null;
-//let r2 = null;
-//let d1 = null;
-//let d2 = null;
 
 document.writeln("<pre>")
-for (let x_c = 0; x_c < cols; ++x_c) {
-	for (let x_r = 0; x_r < rows; ++x_r) {
-		for (let d2_c = 0; d2_c < cols; ++d2_c) {
-			for (let d2_r = 0; d2_r < rows; ++d2_r) {
+for (let x_c = 0; x_c < cols; ++x_c) for (let x_r = 0; x_r < rows; ++x_r) {
+	for (let d2_c = 0; d2_c < cols; ++d2_c) for (let d2_r = 0; d2_r < rows; ++d2_r) {
+		for (let r2_c = 0; r2_c < cols; ++r2_c) for (let r2_r = 0; r2_r < rows; ++r2_r) {
+			for (let l2_c = 0; l2_c < cols; ++l2_c) for (let l2_r = 0; l2_r < rows; ++l2_r) 
+			for (let d1_c = 0; d1_c < cols; ++d1_c) for (let d1_r = 0; d1_r < rows; ++d1_r) {
 				paths.clear();
 				objs.length = 0;
 				hazards.length = 0;
@@ -309,27 +303,27 @@ for (let x_c = 0; x_c < cols; ++x_c) {
 				c = x_c;
 				r = x_r;
 				if (goal()) continue;
-				u1 = new c_up1   (0, 2);				
+				u1 = new c_up1   (0, 2);
 				objs.push(new c_right1(1, 1));
 				objs.push(new c_up1(0, 2));
-				objs.push(new c_down1(2, 0));
-				objs.push(new c_left2(1, 2));
-				objs.push(new c_right2(2, 0));
-				if (objs.some(o => o.c === d2_c && o.r === d2_r && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor))) {
-					continue;
-				}
+				if (objs.some(o => o.c === d1_c && o.r === d1_r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor))) continue;
+				objs.push(new c_down1(d1_c, d1_r));
+				if (objs.some(o => o.c === l2_c && o.r === l2_r && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor))) continue;
+				objs.push(new c_left2(l2_c, l2_r));
+				if (objs.some(o => o.c === r2_c && o.r === r2_r && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor))) continue;
+				objs.push(new c_right2(r2_c, r2_r));
+				if (objs.some(o => o.c === d2_c && o.r === d2_r && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor))) continue;
 				objs.push(new c_down2(d2_c, d2_r));
 				//hazards.push(new c_hazard_right(2, 2), new c_hazard_down(1, 2));
 				const initial_state = state();
 				paths.set(state(), []);
 				visit(state());
-				if (solution !== null) {
+				if (solution !== null && solution.length > 20) {
 					console.log(initial_state, goal_c, goal_r);
 					console.log(solution);
 				}
 			}
 		}
-
 	}
 }
 document.writeln("</pre>")

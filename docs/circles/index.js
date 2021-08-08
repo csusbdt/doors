@@ -1,6 +1,7 @@
 import g from '../canvasapp.js';
 
 g.set_design_size(668, 1080);
+g.init_score(2);
 
 const back_loop = g.loop(g.frames(i_back_0));
 const back_once = g.once(g.frames([i_back_1, i_back_2]));
@@ -89,7 +90,7 @@ t[3].starts(() => {
 		if (s[5] === 1 && s[6] === 1) {
 			t.forEach(o => o.stop());
 			u.stop();
-			g.set_page_state('red');
+			g.set_solved('red');
 			red.start();
 			g.delay(1).starts(g.goto('house')).start();	
 		}
@@ -99,7 +100,7 @@ t[3].starts(() => {
 		if (s[1] === 2 && s[0] === 2) {
 			t.forEach(o => o.stop());
 			u.stop();
-			g.set_page_state('blue');
+			g.set_solved('blue');
 			blue.start();
 			g.delay(1).starts(g.goto('doors')).start();
 		}
@@ -141,12 +142,12 @@ u.starts(reset);
 window.addEventListener('load', () => {
 	back_loop.start();
 	back.start();
-	if (g.get_page_state('red')) {
+	if (g.get_solved('red')) {
 		red.start();
 	} else {
 		red_border.start();
 	}
-	if (g.get_page_state('blue')) {
+	if (g.get_solved('blue')) {
 		blue.start();
 	} else {
 		blue_border.start();

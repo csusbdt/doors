@@ -1,13 +1,14 @@
 import g from '../canvasapp.js';
 
+g.set_design_size(668, 1080);
+g.init_score(2);
+
 let bc = 1;
 let br = 1;
 let uc = 1;
 let ur = 0;
 let dc = 1;
 let dr = 2;
-
-g.set_design_size(668, 1080);
 
 const b_loop     = g.loop(g.frames(i_box ));
 const u_loop     = g.loop(g.frames(i_l2  ));
@@ -143,12 +144,12 @@ const view = () => {
 	d_loop.start();
 
 	if (exit_1()) {
-		g.set_page_state('exit1');
+		g.set_solved('exit1');
 		b_exit_1.start();
 		return;
 	}
 	if (exit_2()) {
-		g.set_page_state('exit2');
+		g.set_solved('exit2');
 		b_exit_2.start();
 		return;
 	}
@@ -231,7 +232,7 @@ window.addEventListener('load', () => {
 	b_loop.start();
 	u_loop.start();
 	d_loop.start();
-	if (g.get_page_state('exit1')) exit1_loop.start();
-	if (g.get_page_state('exit2')) exit2_loop.start();
+	if (g.get_solved('exit1')) exit1_loop.start();
+	if (g.get_solved('exit2')) exit2_loop.start();
 	view();
 });

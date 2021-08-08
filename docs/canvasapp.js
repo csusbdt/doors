@@ -1,4 +1,4 @@
-import { get_state, save_state, get_page, set_state, get_page_state, set_page_state } from './state.js';
+import { get_state, save_state, get_page, get_page_state, set_page_state, init_score, get_score, get_solved, set_solved } from './state.js';
 
 //#region utility functions
 
@@ -504,9 +504,16 @@ const remove_updatable = function(o) {
 	}
 };
 
-//const page_score = g.get_page_state('score');
-let score = new Image();
-score.src = '../images/hud/0.png';
+let score_image = null;
+
+const digit_images = [];
+for (let i = 0; i < 6; ++i) {
+	const digit_image = new Image();
+	digit_image.src = '../images/hud/' + i + '.png';
+	digit_images.push(digit_image);
+}
+const plus_image = new Image();
+plus_image.src = '../images/hud/plus.png';
 
 let previous_time = new Date().getTime() / 1000;
 
@@ -533,7 +540,9 @@ function animation_loop() {
 			// 		ctx.drawImage(fullscreen_image, 0, 0);
 			// 	}
 			// }
-			ctx.drawImage(score, 0, 0);
+			if (score_image) {
+				ctx.drawImage(score_image, 0, 0);
+			}
 			dirty = false;
 		}
 		let dt = current_time - previous_time;
@@ -544,6 +553,12 @@ function animation_loop() {
 }
 
 addEventListener('load', () => {
+	const score = get_score();
+	if (score < digit_images.length) {
+		score_image = digit_images[score];
+	} else {
+		score_image = plus_image;
+	}
 	requestAnimationFrame(animation_loop);
 });
 
@@ -599,6 +614,9 @@ export default {
 	get_page: get_page,
 	get_page_state: get_page_state,
 	set_page_state: set_page_state,
+	init_score: init_score,
+	get_solved: get_solved,
+	set_solved: set_solved,
 	stop_stop_sets: stop_stop_sets,
 	start_start_sets: start_start_sets,
 	circle: circle,

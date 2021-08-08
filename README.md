@@ -10,5 +10,5 @@ doors -> circles, grid1, s2
     grid2 -> grid1, grid3
 	  grid3 -> grid2, grid4, grid5
 	    grid5 -> grid3
-		grid4 -> grid3, s3
-		  s3 -> grid4
+      grid4 -> grid3, grid6
+	    grid6 -> grid4

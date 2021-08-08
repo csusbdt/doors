@@ -1,27 +1,28 @@
 import g from '../canvasapp.js';
 
+g.set_design_size(668, 1080);
+g.init_score(1);
+
 const back_loop = g.loop(g.frames(i_back_0));
 const back_once = g.once(g.frames([i_back_1, i_back_2]));
 const back = g.touch(g.circle(100, 980, 60)).make_independent();
 back.stops(back_loop).starts(back_once);
 back_once.starts(g.delay(.5).starts(g.goto('grid3')));
 
-let bc = 2;
-let br = 0;
+let bc = 1;
+let br = 2;
 let rc = 1;
 let rr = 1;
 let uc = 0;
 let ur = 2;
-let dc = 2;
+let dc = 1;
 let dr = 0;
-let Lc = 1;
-let Lr = 2;
-let Rc = 2;
-let Rr = 0;
-let Dc = 2;
-let Dr = 2;
-
-g.set_design_size(668, 1080);
+let Lc = 2; 
+let Lr = 0;
+let Rc = 1;
+let Rr = 1;
+let Dc = 0;
+let Dr = 0;
 
 const b_loop             = g.loop(g.frames(i_box   ));
 const r_loop             = g.loop(g.frames(i_r     ));
@@ -335,7 +336,7 @@ const view = () => {
 	D_loop.start();
 
 	if (exit_1()) {
-		g.set_page_state('exit1');
+		g.set_solved('exit1');
 		b_exit_1.start();
 		return;
 	}
@@ -525,7 +526,7 @@ window.addEventListener('load', () => {
 	u_loop.start();
 	L_loop.start();
 	R_loop.start();
-	if (g.get_page_state('exit1')) exit_1_loop.start();
+	if (g.get_solved('exit1')) exit_1_loop.start();
 //	if (g.get_page_state('exit2')) exit_2_loop.start();
 //	if (g.get_page_state('exit3')) exit_3_loop.start();
 	view();

@@ -1,5 +1,8 @@
 import g from '../canvasapp.js';
 
+g.set_design_size(668, 1080);
+g.init_score(3);
+
 let bc = 2;
 let br = 0;
 let u1c = 2;
@@ -8,8 +11,6 @@ let r1c = 1;
 let r1r = 0;
 let l2c = 1;
 let l2r = 2;
-
-g.set_design_size(668, 1080);
 
 const b_loop              = g.loop(g.frames(i_box ));
 const u1_loop             = g.loop(g.frames(i_u1  ));
@@ -207,17 +208,17 @@ const view = () => {
 	l2_loop.start();
 
 	if (exit_1()) {
-		g.set_page_state('exit1');
+		g.set_solved('exit1');
 		b_exit_1.start();
 		return;
 	}
 	if (exit_2()) {
-		g.set_page_state('exit2');
+		g.set_solved('exit2');
 		b_exit_2.start();
 		return;
 	}
 	if (exit_3()) {
-		g.set_page_state('exit3');
+		g.set_solved('exit3');
 		b_exit_3.start();
 		return;
 	}
@@ -334,8 +335,8 @@ window.addEventListener('load', () => {
 	u1_loop.start();
 	r1_loop.start();
 	l2_loop.start();
-	if (g.get_page_state('exit1')) exit_1_loop.start();
-	if (g.get_page_state('exit2')) exit_2_loop.start();
-	if (g.get_page_state('exit3')) exit_3_loop.start();
+	if (g.get_solved('exit1')) exit_1_loop.start();
+	if (g.get_solved('exit2')) exit_2_loop.start();
+	if (g.get_solved('exit3')) exit_3_loop.start();
 	view();
 });
