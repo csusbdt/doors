@@ -33,17 +33,7 @@ function c_object(c, r) {
 	}
 	this.c = c;
 	this.r = r;
-//	this.cohabitables = null;
 }
-
-// c_object.prototype.cohabit = function(o) {
-// 	for (let i = 0; i < this.cohabitables.length; ++i) {
-// 		if (cohabitables[i].includes(o.constructor)) {
-// 			return true;
-// 		}
-// 	}
-// 	return false;
-// }
 
 function can(m) {
 	let d1 = null;
@@ -83,7 +73,7 @@ function can(m) {
 		if (d1 && d1.constructor !== c_down1) return false;
 		d2 = objs.find(o => o.c === c && o.r === r - 1 && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor));
 		if (d2 && d2.constructor !== c_down2) return false;
-		s2 = objs.find(o => o.c === c && o.r === r && [c_left2, c_right2, c_up2].includes(o.constructor));
+		s2 = objs.find(o => o.c === c && o.r === r && [c_left2, c_right2, c_down2].includes(o.constructor));
 		if (s2 && (d1 || d2)) return false;
 		s1 = s2 ? 
 			objs.find(o => o.c === c && o.r === r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor)) :
@@ -96,7 +86,7 @@ function can(m) {
 		if (d1 && d1.constructor !== c_up1) return false;
 		d2 = objs.find(o => o.c === c && o.r === r + 1 && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor));
 		if (d2 && d2.constructor !== c_up2) return false;
-		s2 = objs.find(o => o.c === c && o.r === r && [c_left2, c_right2, c_down2].includes(o.constructor));
+		s2 = objs.find(o => o.c === c && o.r === r && [c_left2, c_right2, c_up2].includes(o.constructor));
 		if (s2 && (d1 || d2)) return false;
 		s1 = s2 ? 
 			objs.find(o => o.c === c && o.r === r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor)) :
@@ -104,6 +94,7 @@ function can(m) {
 		if (d1 && s1) return false;
 		potential_hazards = hazards.filter(h => h.c === c && h.r === r + 1);
 	}
+//	if (hazards_blocked(potential_hazards, [d1, d2, s1, s2]))
 	for (let i = 0; i < potential_hazards.length; ++i) {
 		const h = potential_hazards[i];
 		if ([d1, d2, s1, s2].some(o => o && h.blocked(o))) {
@@ -144,13 +135,6 @@ function move(m) {
 		} else if (s1 && s1.constructor !== c_down1) ++s1.r;
 	}
 }
-// c_object.prototype.move = function(m) {
-// 	if      (m === 'left' ) --this.c;
-// 	else if (m === 'right') ++this.c;
-// 	else if (m === 'up'   ) --this.r;
-// 	else if (m === 'down' ) ++this.r;
-// 	else throw new Error();
-// };
 
 function c_left1(c, r) {
 	c_object.call(this, c, r);
@@ -159,32 +143,26 @@ function c_left1(c, r) {
 
 function c_right1(c, r) {
 	c_object.call(this, c, r);
-//	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 function c_up1(c, r) {
 	c_object.call(this, c, r);
-//	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 function c_down1(c, r) {
 	c_object.call(this, c, r);
-//	this.cohabitables   = [ c_box, c_left2, c_right2, c_up2, c_down2 ];
 }
 
 function c_left2(c, r) {
 	c_object.call(this, c, r);
-//	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
 }
 
 function c_right2(c, r) {
 	c_object.call(this, c, r);
-//	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
 }
 
 function c_up2(c, r) {
 	c_object.call(this, c, r);
-//	this.cohabitables   = [ c_box, c_left1, c_right1, c_up1, c_down1 ];
 }
 
 function c_down2(c, r) {
@@ -222,13 +200,13 @@ function state() {
 
 function expand(s) {
 	let j = 0;
-	c = parseInt(s.at(j++));
-	r = parseInt(s.at(j++));
+	c = parseInt(s.charAt(j++));
+	r = parseInt(s.charAt(j++));
 	for (let i = 0; i < objs.length; ++i) {
 		const o = objs[i];
 		if (o instanceof c_object) {
-			o.c = parseInt(s.at(j++));
-			o.r = parseInt(s.at(j++));
+			o.c = parseInt(s.charAt(j++));
+			o.r = parseInt(s.charAt(j++));
 		}
 	}
 }
@@ -294,7 +272,9 @@ for (let x_c = 0; x_c < cols; ++x_c) for (let x_r = 0; x_r < rows; ++x_r) {
 	for (let d2_c = 0; d2_c < cols; ++d2_c) for (let d2_r = 0; d2_r < rows; ++d2_r) {
 		for (let r2_c = 0; r2_c < cols; ++r2_c) for (let r2_r = 0; r2_r < rows; ++r2_r) {
 			for (let l2_c = 0; l2_c < cols; ++l2_c) for (let l2_r = 0; l2_r < rows; ++l2_r) 
-			for (let d1_c = 0; d1_c < cols; ++d1_c) for (let d1_r = 0; d1_r < rows; ++d1_r) {
+			for (let d1_c = 0; d1_c < cols; ++d1_c) for (let d1_r = 0; d1_r < rows; ++d1_r) 
+			for (let u1_c = 0; u1_c < cols; ++u1_c) for (let u1_r = 0; u1_r < rows; ++u1_r)
+			for (let r1_c = 0; r1_c < cols; ++r1_c) for (let r1_r = 0; r1_r < rows; ++r1_r) {
 				paths.clear();
 				objs.length = 0;
 				hazards.length = 0;
@@ -303,9 +283,14 @@ for (let x_c = 0; x_c < cols; ++x_c) for (let x_r = 0; x_r < rows; ++x_r) {
 				c = x_c;
 				r = x_r;
 				if (goal()) continue;
-				u1 = new c_up1   (0, 2);
-				objs.push(new c_right1(1, 1));
-				objs.push(new c_up1(0, 2));
+
+//				objs.push(new c_right1(1, 1));
+				if (objs.some(o => o.c === r1_c && o.r === r1_r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor))) continue;
+				objs.push(new c_right1(r1_c, r1_r));
+
+				if (objs.some(o => o.c === u1_c && o.r === u1_r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor))) continue;
+				objs.push(new c_up1(u1_c, u1_r));
+				
 				if (objs.some(o => o.c === d1_c && o.r === d1_r && [c_left1, c_right1, c_up1, c_down1].includes(o.constructor))) continue;
 				objs.push(new c_down1(d1_c, d1_r));
 				if (objs.some(o => o.c === l2_c && o.r === l2_r && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor))) continue;
@@ -314,11 +299,29 @@ for (let x_c = 0; x_c < cols; ++x_c) for (let x_r = 0; x_r < rows; ++x_r) {
 				objs.push(new c_right2(r2_c, r2_r));
 				if (objs.some(o => o.c === d2_c && o.r === d2_r && [c_left2, c_right2, c_up2, c_down2].includes(o.constructor))) continue;
 				objs.push(new c_down2(d2_c, d2_r));
-				//hazards.push(new c_hazard_right(2, 2), new c_hazard_down(1, 2));
+
+				hazards.push(
+					new c_hazard_right(2, 2)
+				);
+
+				const potential_hazards  = hazards.filter(h => h.c === c && h.r === r);
+				const potential_blockers = objs.filter(o => o.c === c && o.r === r);
+				let hazard_free = true;
+				for (let i = 0; i < potential_hazards.length; ++i) {
+					const h = potential_hazards[i];
+					if (potential_blockers.some(o => o && h.blocked(o))) {
+						continue;
+					} else {
+						hazard_free = false;
+						break;
+					}
+				}
+				if (!hazard_free) continue;
+				
 				const initial_state = state();
 				paths.set(state(), []);
 				visit(state());
-				if (solution !== null && solution.length > 20) {
+				if (solution !== null && solution.length > 40) {
 					console.log(initial_state, goal_c, goal_r);
 					console.log(solution);
 				}
