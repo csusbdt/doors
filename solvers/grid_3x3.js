@@ -1,5 +1,3 @@
-<script>
-
 const cols = 3;
 const rows = 3;
 
@@ -266,7 +264,6 @@ const goal_dir = 'left';
 let c = -1;
 let r = -1;
 
-document.writeln("<pre>")
 for (let x_c = 0; x_c < cols; ++x_c) for (let x_r = 0; x_r < rows; ++x_r) {
 	for (let d2_c = 0; d2_c < cols; ++d2_c) for (let d2_r = 0; d2_r < rows; ++d2_r) {
 		for (let r2_c = 0; r2_c < cols; ++r2_c) for (let r2_r = 0; r2_r < rows; ++r2_r) {
@@ -318,11 +315,9 @@ for (let x_c = 0; x_c < cols; ++x_c) for (let x_r = 0; x_r < rows; ++x_r) {
 				visit(state());
 				if (solution !== null && solution.length > 35) {
 					console.log(initial_state, goal_c, goal_r);
-					console.log(solution);
+					console.log(solution.length);
 				}
 			}
 		}
 	}
 }
-document.writeln("</pre>")
-</script>
