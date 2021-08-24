@@ -7,31 +7,55 @@ const back_loop = g.loop(g.frames(i_back_0));
 const back_once = g.once(g.frames([i_back_1, i_back_2]));
 const back = g.touch(g.circle(100, 980, 60)).make_independent();
 back.stops(back_loop).starts(back_once);
-back_once.starts(g.delay(.5).starts(g.goto('grid4')));
+back_once.starts(g.delay(.5).starts(g.goto('grid2')));
 
-let bc = 1;
-let br = 2;
-let rc = 1;
-let rr = 1;
-let uc = 0;
-let ur = 2;
-let dc = 1;
-let dr = 0;
-let Lc = 2;  
-let Lr = 0;
-let Rc = 1;
-let Rr = 1;
-let Dc = 0;
-let Dr = 0;
+// const nums = [];
+// for (let i = 0; i < 10; ++i) {
+// 	nums.push(g.loop(g.frames(i_0), 10, -280, 100));
+// }
 
-const b_loop             = g.loop(g.frames(i_box   ));
-const r_loop             = g.loop(g.frames(i_r     ));
-const u_loop             = g.loop(g.frames(i_u     ));
-const d_loop             = g.loop(g.frames(i_d     ));
-const L_loop             = g.loop(g.frames(i_L     ));
-const R_loop             = g.loop(g.frames(i_R     ));
-const D_loop             = g.loop(g.frames(i_D     ));
-const exit_1_loop        = g.loop(g.frames(i_exit_1));
+const params_list = [
+	'00120100210200',
+	'00110100220200', 
+	'00000111000211',
+	'01120111010211',
+	'00110100220200',
+	'21110110211210',
+	'22020122210222'
+];
+
+let count = g.get_page_state('count');
+if (count === false) {
+	count = params_list.length;
+}
+let params = params_list[count - 1];
+let j = 0;
+let bc = parseInt(params.charAt(j++));
+let br = parseInt(params.charAt(j++));
+let rc = parseInt(params.charAt(j++));
+let rr = parseInt(params.charAt(j++));
+let uc = parseInt(params.charAt(j++));
+let ur = parseInt(params.charAt(j++));
+let dc = parseInt(params.charAt(j++));
+let dr = parseInt(params.charAt(j++));
+let Lc = parseInt(params.charAt(j++));  
+let Lr = parseInt(params.charAt(j++));
+let Rc = parseInt(params.charAt(j++));
+let Rr = parseInt(params.charAt(j++));
+let Dc = parseInt(params.charAt(j++));
+let Dr = parseInt(params.charAt(j++));
+
+const count_image = window['i_' + count];
+const count_loop = g.loop(g.frames(count_image), 10, -280, 100);
+
+const b_loop       = g.loop(g.frames(i_box   ));
+const r_loop       = g.loop(g.frames(i_r     ));
+const u_loop       = g.loop(g.frames(i_u     ));
+const d_loop       = g.loop(g.frames(i_d     ));
+const L_loop       = g.loop(g.frames(i_L     ));
+const R_loop       = g.loop(g.frames(i_R     ));
+const D_loop       = g.loop(g.frames(i_D     ));
+const exit_1_loop  = g.loop(g.frames(i_exit_1));
 //const exit_2_loop        = g.loop(g.frames(i_exit_2));
 //const exit_3_loop        = g.loop(g.frames(i_exit_3));
 
@@ -119,6 +143,7 @@ const b_up     = g.once(b_up_frames   );
 const b_down   = g.once(b_down_frames );
 
 const b_exit_1 = g.once(b_left_frames , spf,      0, dx * 2);
+const b_reload = g.once(b_left_frames , spf,      0, dx * 2);
 //const b_exit_2 = g.once(b_down_frames , spf, dx * 1, dx * 2);
 //const b_exit_3 = g.once(b_right_frames, spf, dx * 2, dx * 2);
 
@@ -217,7 +242,6 @@ const can_move_down = () => {
 	if (rc === bc && rr === br + 1) return false;
 	if (uc === bc && ur === br + 1) {
 		if (rc === bc && rr === br) return false;
-		if (dc === bc && dr === br) return false;
 		if (Lc === bc && Lr === br) return false;
 		if (Rc === bc && Rr === br) return false;
 	}
@@ -232,6 +256,8 @@ const exit_1 = () => {
 	if (bc === dc && br === dr) return false;
 	if (bc === uc && br === ur) return false;
 	if (bc === rc && br === rr) return false;
+	if (bc === Rc && br === Rr) return false;
+	if (bc === Dc && br === Dr) return false;
 	return bc === 0 && br === 2;
 };
 
@@ -336,8 +362,14 @@ const view = () => {
 	D_loop.start();
 
 	if (exit_1()) {
-		g.set_solved('exit1');
-		b_exit_1.start();
+		g.set_page_state('count', --count);
+		if (count === 0) {
+			g.set_page_state('count', params_list.length);
+			g.set_solved('exit1');
+			b_exit_1.start();
+		} else {
+			b_reload.start();
+		}
 		return;
 	}
 	// if (exit_2()) {
@@ -355,9 +387,9 @@ const view = () => {
 	if (can_move_up()   ) t[bc][br - 1].start();
 	if (can_move_left() ) t[bc - 1][br].start();
 	if (can_move_right()) t[bc + 1][br].start();
-	if (!can_move_down() && !can_move_up() && !can_move_left() && !can_move_right()) {
-		location.reload();
-	}
+//	if (!can_move_down() && !can_move_up() && !can_move_left() && !can_move_right()) {
+//		location.reload();
+//	}
 };
 
 const move_left = () => {
@@ -513,13 +545,17 @@ b_left.starts(view);
 b_right.starts(view);
 b_down.starts(view);
 b_up.starts(view);
-b_exit_1.starts(exit_1_loop, g.delay(.5).starts(g.goto('grid3')));
+b_exit_1.starts(exit_1_loop, g.delay(.5).starts(g.goto('grid2')));
+b_reload.starts(g.delay(.5).starts(g.goto('grids')));
 //b_exit_2.starts(exit_2_loop, g.delay(.5).starts(g.goto('s1')));
 //b_exit_3.starts(exit_3_loop, g.delay(.5).starts(g.goto('s1')));
 
 window.addEventListener('load', () => {
 	back_loop.start();
 	back.start();
+
+	count_loop.start();
+
 	b_loop.start();
 	d_loop.start();
 	r_loop.start();

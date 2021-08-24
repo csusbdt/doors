@@ -7,21 +7,21 @@ const back_loop = g.loop(g.frames(i_back_0));
 const back_once = g.once(g.frames([i_back_1, i_back_2]));
 const back = g.touch(g.circle(100, 980, 60)).make_independent();
 back.stops(back_loop).starts(back_once);
-back_once.starts(g.delay(.5).starts(g.goto('grid4')));
+//back_once.starts(g.delay(.5).starts(g.goto('grid4')));
 
 let bc = 1;
-let br = 2;
+let br = 1;
 let rc = 1;
 let rr = 1;
-let uc = 0;
-let ur = 2;
-let dc = 1;
+let uc = 0; // 11110110211210
+let ur = 1;       // 01120111010211
+let dc = 1;       // 11110110211210
 let dr = 0;
 let Lc = 2;  
-let Lr = 0;
+let Lr = 1;
 let Rc = 1;
-let Rr = 1;
-let Dc = 0;
+let Rr = 2;
+let Dc = 1;
 let Dr = 0;
 
 const b_loop             = g.loop(g.frames(i_box   ));
@@ -217,7 +217,7 @@ const can_move_down = () => {
 	if (rc === bc && rr === br + 1) return false;
 	if (uc === bc && ur === br + 1) {
 		if (rc === bc && rr === br) return false;
-		if (dc === bc && dr === br) return false;
+//		if (dc === bc && dr === br) return false;
 		if (Lc === bc && Lr === br) return false;
 		if (Rc === bc && Rr === br) return false;
 	}
@@ -232,6 +232,8 @@ const exit_1 = () => {
 	if (bc === dc && br === dr) return false;
 	if (bc === uc && br === ur) return false;
 	if (bc === rc && br === rr) return false;
+	if (bc === Rc && br === Rr) return false;
+	if (bc === Dc && br === Dr) return false;
 	return bc === 0 && br === 2;
 };
 
@@ -355,9 +357,9 @@ const view = () => {
 	if (can_move_up()   ) t[bc][br - 1].start();
 	if (can_move_left() ) t[bc - 1][br].start();
 	if (can_move_right()) t[bc + 1][br].start();
-	if (!can_move_down() && !can_move_up() && !can_move_left() && !can_move_right()) {
-		location.reload();
-	}
+//	if (!can_move_down() && !can_move_up() && !can_move_left() && !can_move_right()) {
+//		location.reload();
+//	}
 };
 
 const move_left = () => {
@@ -513,7 +515,7 @@ b_left.starts(view);
 b_right.starts(view);
 b_down.starts(view);
 b_up.starts(view);
-b_exit_1.starts(exit_1_loop, g.delay(.5).starts(g.goto('grid3')));
+//b_exit_1.starts(exit_1_loop, g.delay(.5).starts(g.goto('grid3')));
 //b_exit_2.starts(exit_2_loop, g.delay(.5).starts(g.goto('s1')));
 //b_exit_3.starts(exit_3_loop, g.delay(.5).starts(g.goto('s1')));
 

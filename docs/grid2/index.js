@@ -250,8 +250,8 @@ b_left.starts(view);
 b_right.starts(view);
 b_down.starts(view);
 b_up.starts(view);
-b_exit_1.starts(exit1_loop, g.delay(.5).starts(g.goto('grid1')));
-b_exit_2.starts(exit2_loop, g.delay(.5).starts(g.goto('grid3')));
+b_exit_1.starts(exit1_loop, g.delay(.5).starts(g.goto('doors')));
+b_exit_2.starts(exit2_loop, g.delay(.5).starts(g.goto('grids')));
 
 window.addEventListener('load', () => {
 	b_loop.start();

@@ -1,6 +1,6 @@
 const initial_state = {
 	page: 'doors',
-	version: '12',
+	version: '14',
 	score: 0
 };
 

@@ -328,6 +328,10 @@ c_touch.prototype.stop = function() {
 	remove_touchable(this);
 };
 
+c_touch.prototype.start_first = function() {
+	touchables.unshift(this);
+}
+
 c_touch.prototype.touch = function(x, y) {
 	for (let i = 0; i < this.shapes.length; ++i) {
 		if (this.shapes[i].inside(x - this.dx, y - this.dy)) {
@@ -450,6 +454,10 @@ const add_touchable = function(o) {
 	if (touchables.includes(o)) return;
 	touchables.push(o);
 };
+
+// const unshift_touchable = function(o) {
+// 	touchables.unshift(o);
+// };
 
 const add_drawable = function(o) {
 	if (!('z_index' in o)) throw new Error(o);

@@ -3,6 +3,12 @@ import g from '../canvasapp.js';
 g.set_design_size(668, 1080);
 g.init_score(3);
 
+const help_opening = g.once(g.frames([i_help_0, i_help_1, i_help_2, i_help_3]), 11);
+const help_opened  = g.loop(g.frames(i_help_4), 11);
+const help_closing = g.once(g.frames([i_help_3, i_help_2, i_help_1, i_help_0]), 11);
+const help_open    = g.touch(g.rect(568, 0, 668, 100));
+const help_close   = g.touch(g.rect(0, 0, 668, 1080));
+
 const adj_x = 210;
 const circle_filled   = g.loop(g.frames(i_circle_filled  ), 10, adj_x);
 const square_filled   = g.loop(g.frames(i_square_filled  ), 10, adj_x);
@@ -66,6 +72,7 @@ const door31_close   = g.touch(g.rect( 0, 803, 122, 964));
 const door32_close   = g.touch(g.rect( 344, 793, 440, 1030));
 
 const touches = () => {
+	help_open.start();
 	if (door11_closed.started()) {
 		door11_open.start();
 	} else {
@@ -98,6 +105,11 @@ const touches = () => {
 	}
 };
 
+help_open.starts(help_opening);
+help_opening.starts(help_opened, help_close);
+help_close.stops(help_opened).starts(help_closing);
+help_closing.starts(touches);
+
 const reset_close = g.touch(g.rect(70, 100, 600, 650));
 
 let circles   = 0;
@@ -105,6 +117,7 @@ let squares   = 0;
 let triangles = 0;
 
 const reset = () => {
+	help_open.start();
 	if (door11_opened.started()) {
 		door11_opened.stop();
 		door11_closing.start();
@@ -151,7 +164,7 @@ const show_square = () => {
 	} else if (circles === 2 && triangles === 2 && squares === 2) {
 		g.set_solved('squares');
 		square_filled.start();
-		g.delay(.6).starts(g.goto('grid1')).start();
+		g.delay(.6).starts(g.goto('grid2')).start();
 	} else {
 		touches();
 	}
